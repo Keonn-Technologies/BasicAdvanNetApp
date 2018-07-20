@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Basic Advannet App</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    
+    <link rel="stylesheet" href="css/tabulator/tabulator.min.css">
+    <link rel="stylesheet" href="css/tabulator/tabulator_bootstrap4.min.css">
+    <link rel="stylesheet" href="css/keonn-style.css">
+
+</head>
+<body>
+
+    <section>
+
+        <div class="container">
+
+            <!-- Company logo -->
+            <div class="row my-4">
+                <header class="col">
+                    <img src="img/keonn-logo.png">
+                </header>
+            </div>
+
+            <!-- Connect to reader -->
+            <div class="row">
+                <div class="col-3 px-0">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="ipText">IP</span>
+                        </div>
+                        <input type="text" id="readerIP" class="form-control" aria-label="readerIP" aria-describedby="ipText">
+                        <button type="button" id="connectBtn" class="btn btn-warning">Connect</button>
+                    </div>
+                </div>
+
+                <!-- Display a success or error message when connecting to the reader -->
+                <div class="col">
+                    <div id="connectionResult" class="my-auto"></div>
+                </div>
+            </div>
+
+            <!-- Reader options -->
+            <div class="row">
+             
+                <div class="col-3 p-3" id="options">             
+                    <form id="readerOptionsForm">
+
+                        <!-- Start/Stop reader & status -->
+                        <div class="form-group">
+                            <div class="alert alert-info" role="alert" id="statusBg">
+                                <button type="button" id="startStopButton" class="btn btn-light">Start</button>
+                                <span class="ml-2" id="statusText">NOTCONNECTED</span>
+                            </div>
+                        </div>
+
+                        <!-- Model -->
+                        <div class="form-group">
+                            <label for="power">Model: </label>
+                            <div id="readerModel">Model goes here</div>
+                        </div>
+
+                        <!-- Power -->
+                        <div class="form-group">
+                            <label for="power">Power: <span id="powerVal"></span></label>
+                            <input type="range" id="power" min="0" max="31" step="1" class="custom-range">
+                        </div>
+
+                        <!-- Sensitivity -->
+                        <div class="form-group">
+                            <label for="sensitivityRange">Sensitivity: <span id="sensVal"></span></label>
+                            <input type="range" id="sensitivityRange" min="-75" max="-25" class="custom-range">
+                        </div>
+                        
+                        <!-- Antennas -->
+                        <div class="form-group" id="antennasList">
+                            <label for="antennas">Antennas:</label><br>
+                           
+                        </div>
+                        
+                        <!-- Volume -->
+                        <div class="form-group">
+                            <label for="volumeRange">Volume: <span id="volumeVal"></span></label>
+                            <input type="range" id="volumeRange" min="1" max="10" class="custom-range">
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">Save</button>
+                        <div id="saveResult" hidden></div>
+                    </form>
+
+                </div>
+
+                <!-- Tags list -->
+                <div class="col-9">
+                    <div id="tagsSection">
+                        <div id="tagsList" class="thead-dark"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    
+
+    <footer></footer>
+
+    
+
+    <!-- Scripts -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/tabulator/jquery-ui-1.12.min.js"></script>
+    <script src="js/tabulator/tabulator.min.js"></script>
+
+    <script src="js/util.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/Model.js"></script>
+    <script src="js/Network.js"></script>
+    <script src="js/View.js"></script>
+    <script src="js/Controller.js"></script>
+    <script src="js/Main.js"></script>
+
+
+ 
+
+</body>
+</html>
