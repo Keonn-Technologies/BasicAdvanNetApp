@@ -222,3 +222,12 @@ Network.prototype.stopReader = function(readerIP) {
     });
 }
 
+Network.prototype.listenToWebSocket = function(readerIP, port) {
+    ws = new WebSocket("ws://" + readerIP + ":" + port + "/");
+    ws.onmessage = (event) => {
+        var d = event.data.split(",");      //d = [id, epc,port,mux1,mux2,rssi,timestamp]
+        if (!isNaN("0x" + d[1])) {
+            this.controller.addRowToTable(String(d[1]).toUpperCase(), d[2], d[3], d[4], d[5], d[6]);
+        }
+    }
+}

@@ -38,9 +38,12 @@ View.prototype.initializeListeners = function() {
     });
 }
 
+
 View.prototype.toggleStartStop = function (startStopButton) {
     var action = startStopButton.innerHTML == "Stop" ? "stop" : "start";
     this.controller.updateReaderStatus(this.readerIP, action);
+    if (action == "start")
+        this.controller.listenToWebSocket(this.readerIP, "11985");
 }
 
 /* Connect to reader event */
@@ -173,25 +176,34 @@ View.prototype.displayReaderStatus = function(status) {
     // Background and text to display
     var bg = null;
     var baseclasses = "alert ";
+    var buttonText = null;
 
     switch (status) {
         case "RUNNING":
             bg = baseclasses + "alert-success";
+            buttonText = "Stop";
             break;
         case "STOPPED":
             bg = baseclasses + "alert-danger";
+            buttonText = "Start";
             break;
         case "CONNECTED":
             bg = baseclasses + "alert-primary";
+            buttonText = "Start";
             break;
         case "SHUTDOWN":
             bg = baseclasses + "alert-dark";
+            buttonText = "Start";
             break;
         default:
             bg = baseclasses + "alert-light";
+            buttonText = "Start";
             break;
     }
 
     document.getElementById("statusBg").className = bg;
     document.getElementById("statusText").innerHTML = status;
+    document.getElementById("startStopButton").innerHTML = buttonText;
+    document.getElementById("connectBtn").innerHTML = "Update";
+
 }

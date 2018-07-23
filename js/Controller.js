@@ -130,3 +130,14 @@ Controller.prototype.updateReaderStatus = function(readerIP, action) {
         }
     });
 }
+
+
+/* Dynamic table stuff */
+Controller.prototype.listenToWebSocket = function(readerIP, port) {
+    this.net.listenToWebSocket(readerIP, port);
+}
+
+
+Controller.prototype.addRowToTable = function(epc, antenna, mux1, mux2, rssi, date) {
+    this.model.addRowToTable(epc, antenna, mux1, mux2, rssi, date);
+}

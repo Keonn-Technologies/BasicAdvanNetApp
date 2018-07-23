@@ -200,8 +200,22 @@ Model.prototype.getStatus = function() { return this.status;        }
 /**************** Advanced EPC Table ****************/
 function Table() {
 
+    this.tableName = "#tagsList";   // table div ID
+    this.defaultIndex = "epc";      // column used as an "id"
+    this.refreshTime = 5000;
+
+    //default (test) table data
+    this.defaultData = [
+        { epc:"234234e12a34534f0", antenna:1, mux1:0, mux2:0, rssi:25, date:"1245675543" },
+        { epc:"234234e12a34534f1", antenna:1, mux1:0, mux2:0, rssi:23, date:"1242423475543" },
+        { epc:"234234e12a34534f2", antenna:2, mux1:0, mux2:0, rssi:43, date:"12456543" },
+        { epc:"234234e12a34534f3", antenna:1, mux1:0, mux2:0, rssi:25, date:"143" }
+    ]
+
     //Initialize table columns
-    var tableSettings = {
+    this.tableSettings = {
+        data: this.defaultData,
+        index: this.defaultIndex,
         height:450, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         layout:"fitColumns", //fit columns to width of table (optional)
         columns: [   //Define Table Columns
@@ -214,24 +228,43 @@ function Table() {
         ]
     };
 
-    //default (test) table data
-    var defaultData = [
-        { epc:"234234e12a34534f0", antenna:1, mux1:0, mux2:0, rssi:25, date:"1245675543" },
-        { epc:"234234e12a34534f1", antenna:1, mux1:0, mux2:0, rssi:23, date:"1242423475543" },
-        { epc:"234234e12a34534f2", antenna:2, mux1:0, mux2:0, rssi:43, date:"12456543" },
-        { epc:"234234e12a34534f3", antenna:1, mux1:0, mux2:0, rssi:25, date:"143" }
-    ]
-
-    this.initializeTable(tableSettings);
-    this.populateTable(defaultData);
+    this.initializeTable(this.tableSettings);
+    //this.populateTable(this.defaultData);     /// useless as you can specify the default data inside the constructor
 }
 
 //Initialize Table as tabulator
 Table.prototype.initializeTable = function(tableSettings) {
-    $("#tagsList").tabulator(tableSettings);
+    $(this.tableName).tabulator(tableSettings);
 }
 
+
 //Fill the table with data
-Table.prototype.populateTable = function(defaultData) {
-    $("#tagsList").tabulator("updateOrAddData", defaultData);
+Table.prototype.populateTable = function(data) {
+    $(this.tableName).tabulator("updateOrAddData", data);
 }
+
+/* 
+    Pre: values of the EPC and reader to display in the table as a row
+    Post: updates the row if the EPC exists or creates a new row otherwise
+*/ 
+Table.prototype.addRowToTable = function(epc, antenna = 1, mux1 = 0, mux2 = 0, rssi = 0, date) {
+    $(this.tableName).tabulator("updateOrAddRow", epc, { epc: epc, antenna: antenna, mux1: mux1, mux2: mux2, rssi: rssi, date: date });
+}
+
+// Remove all data from the table
+Table.prototype.clearTable = function() {
+    $(this.tableName).tabulator("clearData");
+}
+
+// Make sure rows and columns are rendered correctly
+Table.prototype.redrawTable = function() {
+    $(this.tableName).tabulator("redraw");
+}
+
+// Refresh the table every resfreshTime ms
+Table.prototype.refreshTable = () => {
+    setInterval(() => {
+        $(this.tableName).tabulator("redraw");
+    },this.refreshTime);
+}
+
