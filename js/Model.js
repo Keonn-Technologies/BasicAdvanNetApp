@@ -1,7 +1,7 @@
 function Model(controller) {
     this.controller = controller;
 
-    var table = new Table();
+    this.table = new Table();
 
     /********* device features *********/
     //power 
@@ -163,6 +163,10 @@ Model.prototype.getReaderValues = function() {
     return readerValues;
 }
 
+Model.prototype.storeInventory = function(JSONinventory) {
+    this.table.storeInventory(JSONinventory);
+}
+
 /********* Setters *********/
 Model.prototype.setMinPower = function(minPower)    {     this.minPower = minPower;         }
 Model.prototype.setMaxPower = function(maxPower)    {     this.maxPower = maxPower;         }
@@ -268,3 +272,22 @@ Table.prototype.refreshTable = () => {
     },this.refreshTime);
 }
 
+
+
+
+
+
+
+//PRe: array of objects
+Table.prototype.storeInventory = function(JSONinventory) {
+    for (var read in JSONinventory) {
+        this.addRowToTable(
+            inventory[read].epc, 
+            inventory[read].port, 
+            inventory[read].mux1, 
+            inventory[read].mux2, 
+            inventory[read].rssi, 
+            inventory[read].ts);
+    }
+
+}

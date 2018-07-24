@@ -39,11 +39,9 @@ View.prototype.initializeListeners = function() {
 }
 
 
-View.prototype.toggleStartStop = function (startStopButton) {
+View.prototype.toggleStartStop = function(startStopButton) {
     var action = startStopButton.innerHTML == "Stop" ? "stop" : "start";
     this.controller.updateReaderStatus(this.readerIP, action);
-    if (action == "start")
-        this.controller.listenToWebSocket(this.readerIP, "11985");
 }
 
 /* Connect to reader event */
@@ -120,12 +118,12 @@ View.prototype.setRangeValue = function(range, value) {
 }
 
 // Set the minimum value of any range reader options
-View.prototype.setRangeMinValue = function (range, minvalue) {
+View.prototype.setRangeMinValue = function(range, minvalue) {
     document.getElementById(range).min = minvalue;
 }
 
 // Set the maximum value of any range reader options
-View.prototype.setRangeMaxValue = function (range, maxvalue) {
+View.prototype.setRangeMaxValue = function(range, maxvalue) {
     document.getElementById(range).max = maxvalue;
 }
 
@@ -205,5 +203,4 @@ View.prototype.displayReaderStatus = function(status) {
     document.getElementById("statusText").innerHTML = status;
     document.getElementById("startStopButton").innerHTML = buttonText;
     document.getElementById("connectBtn").innerHTML = "Update";
-
 }

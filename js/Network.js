@@ -27,7 +27,7 @@ Network.prototype.getRequest = function(url) {
             if (xhttp.status == 200) 
                 resolve(xhttp.responseXML);
             else 
-                reject(Error(xhttp.statusText));
+                reject(xhttp.statusText);
         }
         xhttp.onerror = () => reject(Error("Network error"));
         xhttp.send();
@@ -39,7 +39,7 @@ Network.prototype.getRequest = function(url) {
     Pre: the IP of the reader
     Post: an object containing:
         status of the connection: string (connected || notconnected || invalidIP)
-        data obtained on the request: null if something went wrong, XML documnet if everything went OK
+        data obtained on the request: null if something went wrong, XML document if everything went OK
     Connect to Keonn reader and obtain the RF data
 */
 Network.prototype.connectToReader =  function(readerIP) {
@@ -222,12 +222,17 @@ Network.prototype.stopReader = function(readerIP) {
     });
 }
 
-Network.prototype.listenToWebSocket = function(readerIP, port) {
-    ws = new WebSocket("ws://" + readerIP + ":" + port + "/");
-    ws.onmessage = (event) => {
-        var d = event.data.split(",");      //d = [id, epc,port,mux1,mux2,rssi,timestamp]
-        if (!isNaN("0x" + d[1])) {
-            this.controller.addRowToTable(String(d[1]).toUpperCase(), d[2], d[3], d[4], d[5], d[6]);
+Network.prototype.getInventory = function(readerIP) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var deviceID = await this.getDeviceId(readerIP);
+            var address = "http://" + readerIP + ":3161/devices/" + deviceID + "/jsonMinLocation"; 
+            var xml = await this.getRequest(address);
+            var jsonItems = JSON.parse(this.controller.getXMLTagValue(xml, "/response/data/result")[0]);
+            resolve(jsonItems);
         }
-    }
+        catch(error) {
+            reject(error);
+        }
+    });
 }

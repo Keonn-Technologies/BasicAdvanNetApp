@@ -2,6 +2,9 @@ function Controller() {
     this.view = new View(this);
     this.model = new Model(this);
     this.net = new Network(this);
+
+    this.inventoryRefreshTime = 1000;   //ms
+    this.inventoryLoop = null;
 }
 
 /* 
@@ -114,10 +117,14 @@ Controller.prototype.displayReaderValues = function() {
 Controller.prototype.updateReaderStatus = function(readerIP, action) {
     return new Promise(async (resolve, reject) => {    
         try {
-            if (action == "start")
+            if (action == "start") {
                 await this.net.startReader(readerIP);
-            else if (action == "stop")
+                this.startInventory(readerIP);
+            }
+            else if (action == "stop") {
                 await this.net.stopReader(readerIP);
+                this.stopInventory();
+            }                
             else
                 reject("unknown operation");
             var status = await this.net.getReaderStatus(readerIP);
@@ -133,11 +140,25 @@ Controller.prototype.updateReaderStatus = function(readerIP, action) {
 
 
 /* Dynamic table stuff */
-Controller.prototype.listenToWebSocket = function(readerIP, port) {
-    this.net.listenToWebSocket(readerIP, port);
+Controller.prototype.addRowToTable = function(epc, antenna, mux1, mux2, rssi, date) {
+    this.model.addRowToTable(epc, antenna, mux1, mux2, rssi, date);
 }
 
 
-Controller.prototype.addRowToTable = function(epc, antenna, mux1, mux2, rssi, date) {
-    this.model.addRowToTable(epc, antenna, mux1, mux2, rssi, date);
+Controller.prototype.updateInventory = function (readerIP) {
+    var inventory = this.net.getInventory(readerIP);
+    this.model.storeInventory(inventory);
+}
+
+//run inventory every X seconds
+Controller.prototype.startInventory = function(readerIP) {
+    var that = this;
+    this.inventoryLoop = setInterval(function() {
+        that.updateInventory(readerIP);
+    }, this.inventoryRefreshTime);
+}
+
+//stop fetching inventory
+Controller.prototype.stopInventory = function() {
+    clearInterval(this.inventoryLoop);
 }
