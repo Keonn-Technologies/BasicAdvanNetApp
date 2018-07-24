@@ -146,8 +146,8 @@ Controller.prototype.addRowToTable = function(epc, antenna, mux1, mux2, rssi, da
 
 
 Controller.prototype.updateInventory = function (readerIP) {
-    var inventory = this.net.getInventory(readerIP);
-    this.model.storeInventory(inventory);
+    var JSONinventory = this.net.getInventory(readerIP);
+    this.model.storeInventory(JSONinventory);
 }
 
 //run inventory every X seconds
