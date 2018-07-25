@@ -29,10 +29,32 @@ Network.prototype.getRequest = function(url) {
             else 
                 reject(xhttp.statusText);
         }
-        xhttp.onerror = () => reject(Error("Network error"));
+        xhttp.onerror = () => reject("Network error: cannot perform GET request");
         xhttp.send();
     });
 }
+
+
+Network.prototype.putRequest = function(url, XMLbody) {
+    return new Promise((resolve, reject) => {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("PUT", url, true);
+        xhttp.setRequestHeader("Content-Type", "text/html");
+        xhttp.onload = () => {0
+            if (xhttp.status == 200) 
+                resolve(xhttp.responseXML);
+            else 
+                reject(xhttp.statusText);
+        }
+        xhttp.onerror = () => reject("Network error: cannot perform PUT request");
+        xhttp.send(XMLbody);
+    });
+
+
+/* per al volum    //GET http://host_address:3161/devices/{device-id}/actuatorConf*/
+
+}
+
 
 
 /*  
@@ -235,4 +257,16 @@ Network.prototype.getInventory = function(readerIP) {
             reject(error);
         }
     });
+}
+
+
+Network.prototype.saveSettings = function(readerIP, settings) {
+    //save power, sens, antennas, volume
+    
+    await 
+}
+
+/* setters */
+Network.prototype.setPower = function(power) {
+
 }

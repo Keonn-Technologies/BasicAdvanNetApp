@@ -46,9 +46,8 @@ View.prototype.toggleStartStop = function(startStopButton) {
 
 /* Connect to reader event */
 View.prototype.connectToReader = function() {
-    var readerIP = document.getElementById("readerIP").value;
-    this.readerIP = readerIP;
-    this.controller.connectToReader(readerIP);
+    this.readerIP = document.getElementById("readerIP").value;
+    this.controller.connectToReader(this.readerIP);
 }
 
 View.prototype.displayConnectionMessage = function(connectionResult) {
@@ -117,6 +116,10 @@ View.prototype.setRangeValue = function(range, value) {
     document.getElementById(range).value = value;
 }
 
+View.prototype.getRangeValue = function(range) {
+    return document.getElementById(range).value;
+}
+
 // Set the minimum value of any range reader options
 View.prototype.setRangeMinValue = function(range, minvalue) {
     document.getElementById(range).min = minvalue;
@@ -133,6 +136,10 @@ View.prototype.setRangeMaxValue = function(range, maxvalue) {
 */
 View.prototype.updateDivValue = function(divID, value) {
     document.getElementById(divID).innerHTML = value;
+}
+
+View.prototype.getDivValue = function(divID) {
+    return document.getElementById(divID).innerHTML;
 }
 
 /* 
@@ -180,6 +187,7 @@ View.prototype.displayReaderStatus = function(status) {
         case "RUNNING":
             bg = baseclasses + "alert-success";
             buttonText = "Stop";
+            this.controller.startInventory(this.readerIP);
             break;
         case "STOPPED":
             bg = baseclasses + "alert-danger";
@@ -203,4 +211,13 @@ View.prototype.displayReaderStatus = function(status) {
     document.getElementById("statusText").innerHTML = status;
     document.getElementById("startStopButton").innerHTML = buttonText;
     document.getElementById("connectBtn").innerHTML = "Update";
+}
+
+View.prototype.getValuesToSave = function() {
+    return {
+        power: this.getRangeValue("power"),
+        sensitivity: this.getRangeValue("sensitivityRange"),
+        antennas: this.getActiveAntennas(),
+        volume: this.getRangeValue("volumeRange")
+    }
 }

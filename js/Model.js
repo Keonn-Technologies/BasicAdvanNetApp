@@ -167,6 +167,25 @@ Model.prototype.storeInventory = function(JSONinventory) {
     this.table.storeInventory(JSONinventory);
 }
 
+Model.prototype.clearTable = function() {
+    this.table.clearTable();
+}
+
+//antennas
+Model.prototype.createXML = function (setting, value) {
+    switch (setting) {
+        case "antennas":
+            this.createAntennasXML(value);  //value are the antennas
+            break;
+        default:
+            break;       
+    }
+}
+
+Model.prototype.createAntennasXML = function(antennas) {
+    return '<request>'
+}
+
 /********* Setters *********/
 Model.prototype.setMinPower = function(minPower)    {     this.minPower = minPower;         }
 Model.prototype.setMaxPower = function(maxPower)    {     this.maxPower = maxPower;         }
@@ -218,7 +237,7 @@ function Table() {
 
     //Initialize table columns
     this.tableSettings = {
-        data: this.defaultData,
+        //data: this.defaultData,
         index: this.defaultIndex,
         height:450, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         layout:"fitColumns", //fit columns to width of table (optional)
@@ -282,12 +301,12 @@ Table.prototype.refreshTable = () => {
 Table.prototype.storeInventory = function(JSONinventory) {
     for (var read in JSONinventory) {
         this.addRowToTable(
-            inventory[read].epc, 
-            inventory[read].port, 
-            inventory[read].mux1, 
-            inventory[read].mux2, 
-            inventory[read].rssi, 
-            inventory[read].ts);
+            JSONinventory[read].epc, 
+            JSONinventory[read].port, 
+            JSONinventory[read].mux1, 
+            JSONinventory[read].mux2, 
+            JSONinventory[read].rssi, 
+            JSONinventory[read].ts);
     }
 
 }

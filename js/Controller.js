@@ -17,6 +17,7 @@ Controller.prototype.connectToReader = async function(readerIP) {
         var connectionResult = await this.net.connectToReader(readerIP);
         if (connectionResult.status != "connected")
             return;
+
         await this.storeAntennas(readerIP);
         await this.storeReaderInfo(readerIP);
         await this.storeReaderVolume(readerIP);
@@ -145,9 +146,15 @@ Controller.prototype.addRowToTable = function(epc, antenna, mux1, mux2, rssi, da
 }
 
 
-Controller.prototype.updateInventory = function (readerIP) {
-    var JSONinventory = this.net.getInventory(readerIP);
-    this.model.storeInventory(JSONinventory);
+Controller.prototype.updateInventory = async function (readerIP) {
+    try {
+        var JSONinventory = await this.net.getInventory(readerIP);
+        this.model.clearTable();
+        this.model.storeInventory(JSONinventory);
+    }
+    catch(error) {
+        throw Error(error);
+    }
 }
 
 //run inventory every X seconds
@@ -161,4 +168,18 @@ Controller.prototype.startInventory = function(readerIP) {
 //stop fetching inventory
 Controller.prototype.stopInventory = function() {
     clearInterval(this.inventoryLoop);
+}
+
+
+/* settings is an object 
+{ 
+    power: valorpower
+    sens: sensvalue
+    antennas: 
+    volume: 
+}
+*/
+
+Controller.prototype.saveSettings = function() {
+    var values = await this.view.getValuesToSave();
 }
