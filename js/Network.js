@@ -1,5 +1,10 @@
 function Network(controller)  {
     this.controller = controller;
+
+    //params
+    this.readPower = "RF_READ_POWER";
+    this.sensitivity = "RF_SENSITIVITY";
+    
 }
 
 /* 
@@ -35,19 +40,19 @@ Network.prototype.getRequest = function(url) {
 }
 
 
-Network.prototype.putRequest = function(url, XMLbody) {
+Network.prototype.putRequest = function(url, body) {
     return new Promise((resolve, reject) => {
         var xhttp = new XMLHttpRequest();
         xhttp.open("PUT", url, true);
         xhttp.setRequestHeader("Content-Type", "text/html");
-        xhttp.onload = () => {0
+        xhttp.onload = () => {
             if (xhttp.status == 200) 
                 resolve(xhttp.responseXML);
             else 
                 reject(xhttp.statusText);
         }
         xhttp.onerror = () => reject("Network error: cannot perform PUT request");
-        xhttp.send(XMLbody);
+        xhttp.send(body);
     });
 
 
@@ -259,14 +264,117 @@ Network.prototype.getInventory = function(readerIP) {
     });
 }
 
+/* Settings to save when pressing the "Save" button */
 
-Network.prototype.saveSettings = function(readerIP, settings) {
+Network.prototype.saveValues = function(readerIP, values) {
     //save power, sens, antennas, volume
-    
-    await 
+    return new Promise(async (resolve, reject) => {
+        try {
+            await this.savePower(readerIP, values.power);
+            await this.saveSensitivity(readerIP, values.sensitivity);
+            await this.saveAntennas(readerIP, values.antennas);
+            await this.saveVolume(readerIP, values.volume);
+            resolve("OK");
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
 }
 
-/* setters */
-Network.prototype.setPower = function(power) {
 
+
+//send a put request to the reader
+Network.prototype.savePower = function(readerIP, power) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //http://192.168.1.165:3161/devices/AdvanReader-m4-150/reader/parameter/RF_READ_POWER
+            var deviceID = await this.getDeviceId(readerIP);
+            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/reader/parameter/" + this.readPower;
+            var body = power; 
+            var xml = await this.putRequest(url, body);
+            var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
+            if (status == "OK") 
+                resolve(status);
+            else
+                reject("Could not save power");
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+}
+
+//send a put request to the reader
+Network.prototype.saveSensitivity = function(readerIP, sensitivity) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var deviceID = await this.getDeviceId(readerIP);
+            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/reader/parameter/" + this.sensitivity;
+            var body = sensitivity; 
+            var xml = await this.putRequest(url, body);
+            var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
+            if (status == "OK") 
+                resolve(status);
+            else
+                reject("Could not save sensitivity");
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+}
+//PUT http://host_address:3161/devices/{device-id}/antennas
+Network.prototype.saveAntennas = function(readerIP, activeAntennas) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var deviceID = await this.getDeviceId(readerIP);
+            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/antennas";
+            var xmlbody = this.createAntennasXML(deviceID, activeAntennas); 
+            var xmlresponse = await this.putRequest(url, xmlbody);
+            var status = this.controller.getXMLTagValue(xmlresponse, "/response/status")[0];
+            if (status == "OK") 
+                resolve(status);
+            else
+                reject("Could not save antennas");
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+}
+
+//vector of activeAntennas [1,3]
+Network.prototype.createAntennasXML = function(deviceID, activeAntennas) {
+    var xml = '<request>' +
+                '<entries>';
+    for (var antenna in activeAntennas) {
+        xml += '<entry>' +
+                    '<class>ANTENNA_DEFINITION</class>' +
+                    '<def>' + deviceID + ","  + activeAntennas[antenna] + ",0,0,-1,loc_id,0,0,0</def>" +          //<def>AdvanReader-m4-150,2,0,0,-1,loc_id,40,210,2</def>
+                '</entry>';
+    }    
+    xml +=      '</entries>' +
+            '</request>';
+    return xml;
+}
+
+
+Network.prototype.saveVolume = function(readerIP, volume) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var deviceID = await this.getDeviceId(readerIP);
+            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/antennas";
+            var xmlbody = this.createAntennasXML(deviceID, activeAntennas); 
+            var xmlresponse = await this.putRequest(url, xmlbody);
+            var status = this.controller.getXMLTagValue(xmlresponse, "/response/status")[0];
+            if (status == "OK") 
+                resolve(status);
+            else
+                reject("Could not save volume");
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
 }

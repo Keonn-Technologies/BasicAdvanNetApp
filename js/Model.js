@@ -4,6 +4,7 @@ function Model(controller) {
     this.table = new Table();
 
     /********* device features *********/
+    this.readerIP = null;
     //power 
     this.minPower = null;
     this.maxPower = null;
@@ -28,7 +29,7 @@ function Model(controller) {
     this.writePower = null;     //not used
     this.sensitivity = null;
     this.RFRegion = null;       //not used
-    this.activeAntennas = [];         // vector of objects
+    this.activeAntennas = [];         // vector of integers
     this.volume = null;
 
 }
@@ -163,27 +164,34 @@ Model.prototype.getReaderValues = function() {
     return readerValues;
 }
 
+
+
+/* settings is an object 
+{ 
+    power: valorpower
+    sens: sensvalue
+    antennas: 
+    volume: 
+}
+*/
+
+
+//called after pressing the save button
+Model.prototype.saveValues = function(values) {
+    this.setReadPower(values.power);
+    this.setSensitivity(values.sensitivity);
+    this.antennas = [];
+    for (var a in values.antennas)
+        this.setAntenna(values.antennas[a]);
+    this.setVolume(values.volume);
+}
+
 Model.prototype.storeInventory = function(JSONinventory) {
     this.table.storeInventory(JSONinventory);
 }
 
 Model.prototype.clearTable = function() {
     this.table.clearTable();
-}
-
-//antennas
-Model.prototype.createXML = function (setting, value) {
-    switch (setting) {
-        case "antennas":
-            this.createAntennasXML(value);  //value are the antennas
-            break;
-        default:
-            break;       
-    }
-}
-
-Model.prototype.createAntennasXML = function(antennas) {
-    return '<request>'
 }
 
 /********* Setters *********/
@@ -202,6 +210,7 @@ Model.prototype.setRevision = function(revision) {        this.revision = revisi
 Model.prototype.setFamily = function(family) {            this.family = family;             }
 Model.prototype.setModel = function(model) {              this.model = model;               }
 Model.prototype.setStatus = function(status) {            this.status = status;             }
+Model.prototype.setReaderIP = function(readerIP) {        this.readerIP = readerIP;         }
 
 /********* Getters *********/
 Model.prototype.getNumPorts = function() {  return this.numPorts;    }

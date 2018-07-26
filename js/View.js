@@ -21,6 +21,13 @@ View.prototype.initializeListeners = function() {
         that.toggleStartStop(startStopButton);
     });
 
+    // Save button
+    var saveBtn = document.getElementById("saveBtn");
+    saveBtn.addEventListener("click", function(event) {
+        var values = that.getValuesToSave();
+        that.controller.saveSettings(values);
+    });
+
     //sliders
     var powerBtn = document.getElementById("power");
     powerBtn.addEventListener("input", function (event) {
@@ -51,24 +58,19 @@ View.prototype.connectToReader = function() {
 }
 
 View.prototype.displayConnectionMessage = function(connectionResult) {
-    var connectionDiv = document.getElementById("connectionResult");
 
     switch (connectionResult) {
         case "invalidIP":
-            connectionDiv.className = "text-danger";
-            connectionDiv.innerHTML = "The IP is not valid";
+            this.displayOperationStatus("text-danger", "The IP is not valid");
             break;
         case "notConnected":
-            connectionDiv.className = "text-danger";
-            connectionDiv.innerHTML = "Unable to connect. Does the IP correspond to a reader?";
+            this.displayOperationStatus("text-danger", "Unable to connect. Does the IP correspond to a reader?");
             break;
         case "connected":
-            connectionDiv.className = "text-success";
-            connectionDiv.innerHTML = "Connected.";
+            this.displayOperationStatus("text-success", "Connected.");
             break;
         default:
-            connectionDiv.className = "text-danger";
-            connectionDiv.innerHTML = "Unknown operation";
+            this.displayOperationStatus("text-danger", "Unknown operation");
             break;
     }
 }
@@ -142,6 +144,20 @@ View.prototype.getDivValue = function(divID) {
     return document.getElementById(divID).innerHTML;
 }
 
+View.prototype.getActiveAntennas = function() {
+    
+    var activeAntennas = [];
+    var antennasDiv = document.querySelector('#antennasList');
+    var checkedBoxes = antennasDiv.querySelectorAll('input[type="checkbox"]:checked');
+
+    for (var i = 0; i < checkedBoxes.length; i++) {
+        var checkedID = checkedBoxes[i].id;
+        var numPort = checkedID.substring(checkedID.length - 1);
+        activeAntennas.push(numPort);
+    }
+    return activeAntennas;
+}
+
 /* 
     Pre: the number of RF ports of the reader and a vector with all the active antennas
     Post: displays all the reader antennas with a checked checkbox if the antenna is active or not checked otherwise
@@ -213,6 +229,18 @@ View.prototype.displayReaderStatus = function(status) {
     document.getElementById("connectBtn").innerHTML = "Update";
 }
 
+View.prototype.displaySaveStatus = function(saveStatus) {
+
+    switch (saveStatus) {
+        case "OK":
+            this.displayOperationStatus("alert-success", "Settings saved");
+            break;
+        default:
+            this.displayOperationStatus("alert-danger", "Error saving settings");
+            break;
+    }
+}
+
 View.prototype.getValuesToSave = function() {
     return {
         power: this.getRangeValue("power"),
@@ -220,4 +248,10 @@ View.prototype.getValuesToSave = function() {
         antennas: this.getActiveAntennas(),
         volume: this.getRangeValue("volumeRange")
     }
+}
+
+View.prototype.displayOperationStatus = function(bg, text) {
+    var div = document.getElementById("operationStatus");
+    div.innerHTML = text;
+    div.className = "alert " + bg;
 }

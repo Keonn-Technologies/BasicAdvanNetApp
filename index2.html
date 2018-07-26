@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    
+    <link rel="stylesheet" href="css/tabulator/tabulator.min.css">
+    <link rel="stylesheet" href="css/tabulator/tabulator_bootstrap4.min.css">
+    <link rel="stylesheet" href="css/keonn-style.css">
+
+</head>
+<body>
+
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col">
+
+                    <header class="m-4">
+                            <!-- Company logo -->
+                            <img src="img/keonn-logo.png" class=" w-75">
+                        </header>
+
+            </div>
+        </div>
+
+
+
+
+        <!-- Connect to reader -->
+        <div class="row">
+
+            <div class="col">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="ipText">IP</span>
+                    </div>
+                    <input type="text" id="readerIP" class="form-control" aria-label="readerIP" aria-describedby="ipText">
+                    <button type="button" id="connectBtn" class="btn btn-warning">Connect</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Display a success or error message when performing an operation -->
+        <div class="row">
+            <div class="col">
+                <div class="alert" role="alert" id="operationStatus"></div>
+            </div>
+        </div>
+
+
+        <!-- Reader options -->
+        <div class="row">
+                
+            <div class="col-md-4" id="options">             
+                <form id="readerOptionsForm" class="rounded">
+
+                    <div class="container">
+                        
+                        <!-- Start/Stop reader & status -->
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <div class="alert alert-info my-3" role="alert" id="statusBg">
+                                        <button type="button" id="startStopButton" class="btn btn-light">Start</button>
+                                        <span class="mx-2" id="statusText">NOTCONNECTED</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Model -->
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="power">Model: </label>
+                                </div>
+                            </div>
+                            <div class="col-10">
+                                <div id="readerModel">Model goes here</div>
+                            </div>
+                        </div>
+
+                        <!-- Power -->
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="power">Power:</label>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <span id="powerVal" class="badge badge-light">20</span>
+                            </div>
+                            <div class="col-8">
+                                <input type="range" id="power" min="0" max="31" step="1" class="custom-range">
+                            </div>
+                        </div>  
+
+                        <!-- Sensitivity -->
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="sensitivityRange">Sensitivity:</label>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <span id="sensVal"></span>
+                            </div>
+                            <div class="col-8">
+                                    <input type="range" id="sensitivityRange" min="-75" max="-25" class="custom-range">
+                            </div>
+                        </div>
+                        
+                        <!-- Antennas -->
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="form-group" id="antennasList">
+                                    <label for="antennas">Antennas:</label><br>
+                                </div>
+                            </div>
+                        
+                        </div>
+                        
+                        <!-- Volume -->
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="volumeRange">Volume:</label>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <span id="volumeVal"></span>
+                            </div>
+
+                            <div class="col-8">
+                                <input type="range" id="volumeRange" min="1" max="10" class="custom-range">
+                            </div>
+                        </div>
+
+                        <!-- Save button -->
+                        <div class="row">
+                            <div class="col">
+                                <button id="saveBtn" class="mb-3 btn btn-primary btn-block" type="button">Save</button>
+                            </div>
+                        </div>
+                        
+                        <div id="saveResult" hidden></div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-8">
+                <div id="tagsSection">
+                    <div id="tagsList" class="thead-dark"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+
+            
+
+        </div>
+
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/Model.js"></script>
+    <script src="js/Network.js"></script>
+    <script src="js/View.js"></script>
+    <script src="js/Controller.js"></script>
+    <script src="js/Main.js"></script>
+    
+</body>
+</html>

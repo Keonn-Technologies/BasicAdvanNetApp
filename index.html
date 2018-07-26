@@ -14,17 +14,15 @@
 </head>
 <body>
 
-    <section>
+
+    <header class="">
+        <!-- Company logo -->
+        <img src="img/keonn-logo.png">
+    </header>
+
+
 
         <div class="container">
-
-            <!-- Company logo -->
-            <div class="row my-4">
-                <header class="col">
-                    <img src="img/keonn-logo.png">
-                </header>
-            </div>
-
             <!-- Connect to reader -->
             <div class="row">
                 <div class="col-3 px-0">
@@ -37,16 +35,17 @@
                     </div>
                 </div>
 
-                <!-- Display a success or error message when connecting to the reader -->
+                <!-- Display a success or error message when performing an operation -->
                 <div class="col">
-                    <div id="connectionResult" class="my-auto"></div>
+                    <div class="alert" role="alert" id="operationStatus"></div>
                 </div>
             </div>
+        
 
             <!-- Reader options -->
             <div class="row">
              
-                <div class="col-3 p-3" id="options">             
+                <div class="col" id="options">             
                     <form id="readerOptionsForm">
 
                         <!-- Start/Stop reader & status -->
@@ -87,7 +86,7 @@
                             <input type="range" id="volumeRange" min="1" max="10" class="custom-range">
                         </div>
 
-                        <button class="btn btn-primary" type="submit">Save</button>
+                        <button id="saveBtn" class="btn btn-primary" type="button">Save</button>
                         <div id="saveResult" hidden></div>
                     </form>
 

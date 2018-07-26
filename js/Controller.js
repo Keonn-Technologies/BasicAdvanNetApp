@@ -18,6 +18,7 @@ Controller.prototype.connectToReader = async function(readerIP) {
         if (connectionResult.status != "connected")
             return;
 
+        this.model.setReaderIP(readerIP);
         await this.storeAntennas(readerIP);
         await this.storeReaderInfo(readerIP);
         await this.storeReaderVolume(readerIP);
@@ -180,6 +181,14 @@ Controller.prototype.stopInventory = function() {
 }
 */
 
-Controller.prototype.saveSettings = function() {
-    var values = await this.view.getValuesToSave();
+Controller.prototype.saveSettings = async function(settings) {
+    try {
+        var saveStatus = await this.net.saveValues(this.model.readerIP, settings);
+        this.model.saveValues(settings);
+        this.view.displaySaveStatus(saveStatus);
+    }
+    catch(error) {
+        throw Error(error);
+    }
+    
 }
