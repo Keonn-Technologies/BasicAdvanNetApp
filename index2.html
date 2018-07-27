@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>AdvanMini</title>
 
     <link rel="stylesheet" href="css/bootstrap.css">
     
@@ -20,22 +20,16 @@
 
         <div class="row">
             <div class="col">
-
-                    <header class="m-4">
-                            <!-- Company logo -->
-                            <img src="img/keonn-logo.png" class=" w-75">
-                        </header>
-
+                <header class="my-4">
+                    <!-- Company logo -->
+                    <img src="img/keonn-logo.png" class="w-25" />
+                </header>
             </div>
         </div>
 
-
-
-
         <!-- Connect to reader -->
         <div class="row">
-
-            <div class="col">
+            <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="ipText">IP</span>
@@ -45,12 +39,9 @@
                 </div>
             </div>
 
-        </div>
-
-        <!-- Display a success or error message when performing an operation -->
-        <div class="row">
-            <div class="col">
-                <div class="alert" role="alert" id="operationStatus"></div>
+            <!-- Display a success or error message when performing an operation -->
+            <div class="col-md-9">
+                <div class="alert" role="alert" id="operationStatus">HELLO</div>
             </div>
         </div>
 
@@ -58,71 +49,83 @@
         <!-- Reader options -->
         <div class="row">
                 
-            <div class="col-md-4" id="options">             
+            <div class="col-md-3" id="options">             
                 <form id="readerOptionsForm" class="rounded">
 
                     <div class="container">
                         
                         <!-- Start/Stop reader & status -->
-                        <div class="row">
+                        <div class="row alert-info rounded-top border-0 mb-3" id="statusBg" role="alert">
                             <div class="col">
-                                <div class="form-group">
-                                    <div class="alert alert-info my-3" role="alert" id="statusBg">
-                                        <button type="button" id="startStopButton" class="btn btn-light">Start</button>
-                                        <span class="mx-2" id="statusText">NOTCONNECTED</span>
-                                    </div>
+                                <div class="form-group mt-3">                                    
+                                    <button type="button" id="startStopButton" class="btn btn-light">Start</button>
+                                    <span class="mx-2" id="statusText">NOTCONNECTED</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Model -->
                         <div class="row">
-                            <div class="col-2">
+                            <div class="col-3">
                                 <div class="form-group">
-                                    <label for="power">Model: </label>
+                                    <label for="readerModel">Model</label>
                                 </div>
                             </div>
-                            <div class="col-10">
-                                <div id="readerModel">Model goes here</div>
+                            <div class="col-9 text-right">
+                                <div id="readerModel"></div>
                             </div>
                         </div>
 
                         <!-- Power -->
                         <div class="row">
-                            <div class="col-2">
+                            <div class="col-3">
                                 <div class="form-group">
-                                    <label for="power">Power:</label>
+                                    <label for="power">Power</label>
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <span id="powerVal" class="badge badge-light">20</span>
+
+                            <div class="col-9 text-right">
+                                <input type="number" id="power" min="0" max="31" step="0.5">
                             </div>
-                            <div class="col-8">
-                                <input type="range" id="power" min="0" max="31" step="1" class="custom-range">
-                            </div>
-                        </div>  
+                        </div>
 
                         <!-- Sensitivity -->
                         <div class="row">
-                            <div class="col-2">
+                            <div class="col-3">
                                 <div class="form-group">
-                                    <label for="sensitivityRange">Sensitivity:</label>
+                                    <label for="sensitivity">Sensitivity</label>
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <span id="sensVal"></span>
-                            </div>
-                            <div class="col-8">
-                                    <input type="range" id="sensitivityRange" min="-75" max="-25" class="custom-range">
+                            
+                            <div class="col-9 text-right">
+                                <input type="number" id="sensitivity" min="-75" max="-35" step="1">
                             </div>
                         </div>
                         
                         <!-- Antennas -->
                         <div class="row">
                             <div class="col-2">
-                                <div class="form-group" id="antennasList">
-                                    <label for="antennas">Antennas:</label><br>
+                                <div class="form-group">
+                                    <label for="antennas">Antennas</label><br>
                                 </div>
+                            </div>
+
+                            <div class="col-10 text-right" id="antennasList">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary">
+                                        <input type="checkbox" name="options" id="option1" autocomplete="off" checked>1
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="checkbox" name="options" id="option2" autocomplete="off">2
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="checkbox" name="options" id="option3" autocomplete="off">3
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="checkbox" name="options" id="option3" autocomplete="off">4
+                                    </label>
+                                </div>
+
                             </div>
                         
                         </div>
@@ -131,15 +134,11 @@
                         <div class="row">
                             <div class="col-2">
                                 <div class="form-group">
-                                    <label for="volumeRange">Volume:</label>
+                                    <label for="volumeRange">Volume</label>
                                 </div>
-                            </div>
-                            <div class="col-2">
-                                <span id="volumeVal"></span>
-                            </div>
-
-                            <div class="col-8">
-                                <input type="range" id="volumeRange" min="1" max="10" class="custom-range">
+                            </div>                            
+                            <div class="col-10 text-right">
+                               <input type="number" id="volume" min="1" max="10" step="1">
                             </div>
                         </div>
 
@@ -154,27 +153,33 @@
                     </div>
                 </form>
             </div>
-
-            <div class="col-md-8">
+            <br>
+            <div class="col-md-9">
                 <div id="tagsSection">
                     <div id="tagsList" class="thead-dark"></div>
                 </div>
             </div>
         </div>
 
+    </div>
 
-        <div class="row">
 
-            
+    <footer></footer>
 
-        </div>
 
+    <!-- Scripts -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/tabulator/jquery-ui-1.12.min.js"></script>
+    <script src="js/tabulator/tabulator.min.js"></script>
+
+    <script src="js/util.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/Model.js"></script>
     <script src="js/Network.js"></script>
     <script src="js/View.js"></script>
     <script src="js/Controller.js"></script>
     <script src="js/Main.js"></script>
+
     
 </body>
 </html>

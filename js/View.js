@@ -3,6 +3,7 @@ function View(controller) {
 
     this.readerIP = null;
     this.initializeListeners();
+    this.initInputValues();
 }
 
 View.prototype.initializeListeners = function() {
@@ -27,22 +28,16 @@ View.prototype.initializeListeners = function() {
         var values = that.getValuesToSave();
         that.controller.saveSettings(values);
     });
+}
 
-    //sliders
-    var powerBtn = document.getElementById("power");
-    powerBtn.addEventListener("input", function (event) {
-        that.updateRangeLabel("powerVal", this.value);
-    });
-
-    var sensBtn = document.getElementById("sensitivityRange");
-    sensBtn.addEventListener("input", function (event) {
-        that.updateRangeLabel("sensVal", this.value);
-    });
-
-    var volumeBtn = document.getElementById("volumeRange");
-    volumeBtn.addEventListener("input", function (event) {
-        that.updateRangeLabel("volumeVal", this.value);
-    });
+View.prototype.initInputValues = function() {
+    
+    this.updateDivValue("readerModel", "Reader model");
+    this.setInputNumberDefaultValue("power", 25);
+    this.setInputNumberDefaultValue("sensitivity", -75);
+    //fix
+    this.displayAntennas(readerValues.numPorts, readerValues.activeAntennas);   
+    this.setInputNumberDefaultValue("volume", 5);
 }
 
 
@@ -78,8 +73,6 @@ View.prototype.displayConnectionMessage = function(connectionResult) {
 // Display reader options default values on the interface
 View.prototype.displayReaderValues = function(readerValues) {
 
-    console.log(readerValues);
-
     // Status
     this.displayReaderStatus(readerValues.status);
 
@@ -87,16 +80,14 @@ View.prototype.displayReaderValues = function(readerValues) {
     this.updateDivValue("readerModel", readerValues.model);
 
     // Power
-    this.setRangeMinValue("power", readerValues.minPower);
-    this.setRangeMaxValue("power", readerValues.maxPower);
-    this.setRangeValue("power", readerValues.readPower);
-    this.updateRangeLabel("powerVal", readerValues.readPower);
+    this.setInputNumberMinValue("power", readerValues.minPower);
+    this.setInputNumberMaxValue("power", readerValues.maxPower);
+    this.setInputNumberDefaultValue("power", readerValues.readPower);
 
     // Sensitivity
-    this.setRangeMinValue("sensitivityRange", readerValues.maxSensitivity);
-    this.setRangeMaxValue("sensitivityRange", readerValues.minSensitivity);
-    this.setRangeValue("sensitivityRange", readerValues.sensitivity);
-    this.updateRangeLabel("sensVal", readerValues.sensitivity);
+    this.setInputNumberMinValue("sensitivity", readerValues.minSensitivity);
+    this.setInputNumberMaxValue("sensitivity", readerValues.maxSensitivity);
+    this.setInputNumberDefaultValue("sensitivity", readerValues.sensitivity);
 
     // Antennas
     this.displayAntennas(readerValues.numPorts, readerValues.activeAntennas);   
@@ -108,28 +99,18 @@ View.prototype.displayReaderValues = function(readerValues) {
     this.updateRangeLabel("volumeVal", readerValues.volume);
 }
 
-// Display the range current value to give feedback to the user
-View.prototype.updateRangeLabel = function(rangeLabel, value) {
-    this.updateDivValue(rangeLabel, value);
-}
-
-// Set any range value
-View.prototype.setRangeValue = function(range, value) {
-    document.getElementById(range).value = value;
-}
-
-View.prototype.getRangeValue = function(range) {
-    return document.getElementById(range).value;
+View.prototype.setInputNumberDefaultValue = function(inputNumber, value) {
+    document.getElementById(inputNumber).value = value;
 }
 
 // Set the minimum value of any range reader options
-View.prototype.setRangeMinValue = function(range, minvalue) {
-    document.getElementById(range).min = minvalue;
+View.prototype.setInputNumberMinValue = function(inputNumber, minvalue) {
+    document.getElementById(inputNumber).min = minvalue;
 }
 
 // Set the maximum value of any range reader options
-View.prototype.setRangeMaxValue = function(range, maxvalue) {
-    document.getElementById(range).max = maxvalue;
+View.prototype.setInputNumberMaxValue = function(inputNumber, maxvalue) {
+    document.getElementById(inputNumber).max = maxvalue;
 }
 
 /*

@@ -248,14 +248,15 @@ function Table() {
     this.tableSettings = {
         //data: this.defaultData,
         index: this.defaultIndex,
+        responsiveLayout: "hide",
         height:450, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-        layout:"fitColumns", //fit columns to width of table (optional)
+        layout: "fitColumns", //fit columns to width of table (optional)
         columns: [   //Define Table Columns
-            { title:"EPC", field:"epc", sorter:"string", width:220, headerFilter:"input" },
-            { title:"Antenna", field:"antenna", sorter:"number", headerFilter:"input" },
-            { title:"Mux 1", field:"mux1", sorter:"number", headerFilter:"input" },
-            { title:"Mux 2", field:"mux2", sorter:"number",  headerFilter:"input" },
-            { title:"RSSI", field:"rssi", sorter:"number", headerFilter:"input" },
+            { title:"EPC", field:"epc", sorter:"string", width:220, headerFilter:"input", responsive:0 },
+            { title:"Antenna", field:"antenna", sorter:"number", width: 120, headerFilter:"input", responsive:0 },
+            { title:"Mux 1", field:"mux1", sorter:"number", width: 100, headerFilter:"input" },
+            { title:"Mux 2", field:"mux2", sorter:"number", width: 100, headerFilter:"input" },
+            { title:"RSSI", field:"rssi", sorter:"number", width: 100, headerFilter:"input" },
             { title:"Date", field:"date", sorter:"date", headerFilter:"input" }
         ]
     };
@@ -299,11 +300,6 @@ Table.prototype.refreshTable = () => {
         $(this.tableName).tabulator("redraw");
     },this.refreshTime);
 }
-
-
-
-
-
 
 
 //PRe: array of objects
