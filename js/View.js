@@ -28,6 +28,40 @@ View.prototype.initializeListeners = function() {
         var values = that.getValuesToSave();
         that.controller.saveSettings(values);
     });
+
+    // Power
+    var increasePower = document.getElementById("increasePower");
+    increasePower.addEventListener("click", function(event) {
+        that.increaseInputNumber("power");
+    });
+
+    var decreasePower = document.getElementById("decreasePower");
+    decreasePower.addEventListener("click", function(event) {
+        that.decreaseInputNumber("power");
+    });
+
+    // Sensitivity
+    var increaseSensitivity = document.getElementById("increaseSensitivity");
+    increaseSensitivity.addEventListener("click", function(event) {
+        that.increaseInputNumber("sensitivity");
+    });
+
+    var decreaseSensitivity = document.getElementById("decreaseSensitivity");
+    decreaseSensitivity.addEventListener("click", function(event) {
+        that.decreaseInputNumber("sensitivity");
+    });
+
+    // Volume
+    var increaseVolume = document.getElementById("increaseVolume");
+    increaseVolume.addEventListener("click", function(event) {
+        that.increaseInputNumber("volume");
+    });
+
+    var decreaseVolume = document.getElementById("decreaseVolume");
+    decreaseVolume.addEventListener("click", function(event) {
+        that.decreaseInputNumber("volume");
+    });
+
 }
 
 View.prototype.initInputValues = function() {
@@ -35,8 +69,7 @@ View.prototype.initInputValues = function() {
     this.updateDivValue("readerModel", "Reader model");
     this.setInputNumberDefaultValue("power", 25);
     this.setInputNumberDefaultValue("sensitivity", -75);
-    //fix
-    this.displayAntennas(readerValues.numPorts, readerValues.activeAntennas);   
+    this.displayAntennas(4, [1]);   
     this.setInputNumberDefaultValue("volume", 5);
 }
 
@@ -56,16 +89,16 @@ View.prototype.displayConnectionMessage = function(connectionResult) {
 
     switch (connectionResult) {
         case "invalidIP":
-            this.displayOperationStatus("text-danger", "The IP is not valid");
+            this.displayOperationStatus("alert-danger", "The IP is not valid");
             break;
         case "notConnected":
-            this.displayOperationStatus("text-danger", "Unable to connect. Does the IP correspond to a reader?");
+            this.displayOperationStatus("alert-danger", "Unable to connect. Does the IP correspond to a reader?");
             break;
         case "connected":
-            this.displayOperationStatus("text-success", "Connected.");
+            this.displayOperationStatus("alert-success", "Connected.");
             break;
         default:
-            this.displayOperationStatus("text-danger", "Unknown operation");
+            this.displayOperationStatus("alert-danger", "Unknown operation");
             break;
     }
 }
@@ -93,10 +126,9 @@ View.prototype.displayReaderValues = function(readerValues) {
     this.displayAntennas(readerValues.numPorts, readerValues.activeAntennas);   
 
     // Volume
-    this.setRangeMinValue("volumeRange", 1);
-    this.setRangeMaxValue("volumeRange", 10);
-    this.setRangeValue("volumeRange", readerValues.volume);
-    this.updateRangeLabel("volumeVal", readerValues.volume);
+    this.setInputNumberMinValue("volume", 1);
+    this.setInputNumberMaxValue("volume", 10);
+    this.setInputNumberDefaultValue("volume", readerValues.volume);
 }
 
 View.prototype.setInputNumberDefaultValue = function(inputNumber, value) {
@@ -145,16 +177,17 @@ View.prototype.getActiveAntennas = function() {
 */
 View.prototype.displayAntennas = function(numPorts, activeAntennas) {
     var antennasList = document.getElementById("antennasList");
+    var html = '<div class="btn-group btn-group-toggle" data-toggle="buttons">';
 
-    antennasList.innerHTML = '<label for="antennas">Antennas:</label><br>';
     for (var port = 1; port <= numPorts; port++) {
-        antennasList.innerHTML += 
-            '<input class="form-check-input ml-4" type="checkbox" value="port' + port + '" id="antennaPort' + port + '" ' + this.isActiveAntenna(port, activeAntennas) + '>' +
-            '<label class="form-check-label ml-5" for="antennaPort' + port + '">' +
-                'Port ' + port +
-            '</label>' +
-            '<br>';
+        html += 
+            '<label class="btn btn-secondary">' +
+                '<input type="checkbox" name="options" id="antennaPort' + port +'" autocomplete="off" ' + this.isActiveAntenna(port, activeAntennas) + '>' + port +
+            '</label>';
     }
+
+    html += '</div>';
+    antennasList.innerHTML = html;
 }
 
 /*
@@ -177,7 +210,7 @@ View.prototype.displayReaderStatus = function(status) {
     
     // Background and text to display
     var bg = null;
-    var baseclasses = "alert ";
+    var baseclasses = "col m-3 alert ";
     var buttonText = null;
 
     switch (status) {
@@ -225,9 +258,9 @@ View.prototype.displaySaveStatus = function(saveStatus) {
 View.prototype.getValuesToSave = function() {
     return {
         power: this.getRangeValue("power"),
-        sensitivity: this.getRangeValue("sensitivityRange"),
+        sensitivity: this.getRangeValue("sensitivity"),
         antennas: this.getActiveAntennas(),
-        volume: this.getRangeValue("volumeRange")
+        volume: this.getRangeValue("volume")
     }
 }
 
@@ -236,3 +269,22 @@ View.prototype.displayOperationStatus = function(bg, text) {
     div.innerHTML = text;
     div.className = "alert " + bg;
 }
+
+View.prototype.increaseInputNumber = function(input) {
+    var inputNumber = document.getElementById(input);
+    var currentValue = parseInt(inputNumber.value, 10);
+    var maxValue = parseInt(inputNumber.max, 10);
+
+    if (currentValue < maxValue)
+        inputNumber.value++;
+}
+
+View.prototype.decreaseInputNumber = function(input) {
+    var inputNumber = document.getElementById(input);
+    var currentValue = parseInt(inputNumber.value, 10);
+    var minValue = parseInt(inputNumber.min, 10);
+
+    if (currentValue > minValue)
+        inputNumber.value--;
+}
+

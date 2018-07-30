@@ -252,7 +252,7 @@ function Table() {
         height:450, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         layout: "fitColumns", //fit columns to width of table (optional)
         columns: [   //Define Table Columns
-            { title:"EPC", field:"epc", sorter:"string", width:220, headerFilter:"input", responsive:0 },
+            { title:"EPC", field:"epc", sorter:"string", width:240, headerFilter:"input", responsive:0 },
             { title:"Antenna", field:"antenna", sorter:"number", width: 120, headerFilter:"input", responsive:0 },
             { title:"Mux 1", field:"mux1", sorter:"number", width: 100, headerFilter:"input" },
             { title:"Mux 2", field:"mux2", sorter:"number", width: 100, headerFilter:"input" },

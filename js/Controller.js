@@ -161,6 +161,9 @@ Controller.prototype.updateInventory = async function (readerIP) {
 //run inventory every X seconds
 Controller.prototype.startInventory = function(readerIP) {
     var that = this;
+    if (this.inventoryLoop)
+        clearInterval(this.inventoryLoop);
+        
     this.inventoryLoop = setInterval(function() {
         that.updateInventory(readerIP);
     }, this.inventoryRefreshTime);

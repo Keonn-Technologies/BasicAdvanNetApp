@@ -29,7 +29,7 @@
 
         <!-- Connect to reader -->
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="ipText">IP</span>
@@ -40,8 +40,8 @@
             </div>
 
             <!-- Display a success or error message when performing an operation -->
-            <div class="col-md-9">
-                <div class="alert" role="alert" id="operationStatus">HELLO</div>
+            <div class="col-lg-9">
+                <div class="alert" role="alert" id="operationStatus"></div>
             </div>
         </div>
 
@@ -49,17 +49,17 @@
         <!-- Reader options -->
         <div class="row">
                 
-            <div class="col-md-3" id="options">             
+            <div class="col-lg-3" id="options">             
                 <form id="readerOptionsForm" class="rounded">
 
                     <div class="container">
                         
-                        <!-- Start/Stop reader & status -->
-                        <div class="row alert-info rounded-top border-0 mb-3" id="statusBg" role="alert">
-                            <div class="col">
-                                <div class="form-group mt-3">                                    
+                        <!-- Start/Stop reader & status --> 
+                        <div class="row" role="alert">
+                            <div class="col m-3 alert-info alert" id="statusBg">
+                                <div class="form-group mb-0">                                    
                                     <button type="button" id="startStopButton" class="btn btn-light">Start</button>
-                                    <span class="mx-2" id="statusText">NOTCONNECTED</span>
+                                    <span class="mx-2" id="statusText">CONNECT</span>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,9 @@
                             </div>
 
                             <div class="col-9 text-right">
-                                <input type="number" id="power" min="0" max="31" step="0.5">
+                                <img id="decreasePower" src="img/minus.svg" class="d-xl-none numModifier"></img>
+                                <input type="number" id="power" class="form-control d-inline" min="0" max="31" step="0.5">
+                                <img id="increasePower" src="img/plus.svg" class="d-xl-none numModifier"></img>
                             </div>
                         </div>
 
@@ -98,7 +100,9 @@
                             </div>
                             
                             <div class="col-9 text-right">
-                                <input type="number" id="sensitivity" min="-75" max="-35" step="1">
+                                <img id="decreaseSensitivity" src="img/minus.svg" class="d-xl-none numModifier"></img>
+                                <input type="number" id="sensitivity" class="form-control d-inline" min="-75" max="-35" step="1">
+                                <img id="increaseSensitivity" src="img/plus.svg" class="d-xl-none numModifier"></img>
                             </div>
                         </div>
                         
@@ -110,23 +114,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-10 text-right" id="antennasList">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary">
-                                        <input type="checkbox" name="options" id="option1" autocomplete="off" checked>1
-                                    </label>
-                                    <label class="btn btn-secondary">
-                                        <input type="checkbox" name="options" id="option2" autocomplete="off">2
-                                    </label>
-                                    <label class="btn btn-secondary">
-                                        <input type="checkbox" name="options" id="option3" autocomplete="off">3
-                                    </label>
-                                    <label class="btn btn-secondary">
-                                        <input type="checkbox" name="options" id="option3" autocomplete="off">4
-                                    </label>
-                                </div>
-
-                            </div>
+                            <div class="col-10 text-right" id="antennasList"></div>
                         
                         </div>
                         
@@ -134,11 +122,13 @@
                         <div class="row">
                             <div class="col-2">
                                 <div class="form-group">
-                                    <label for="volumeRange">Volume</label>
+                                    <label for="volume">Volume</label>
                                 </div>
                             </div>                            
                             <div class="col-10 text-right">
-                               <input type="number" id="volume" min="1" max="10" step="1">
+                                <img id="decreaseVolume" src="img/minus.svg" class="d-xl-none numModifier"></img>
+                                <input type="number" id="volume" class="form-control d-inline" min="1" max="10" step="1">
+                                <img id="increaseVolume" src="img/plus.svg" class="d-xl-none numModifier"></img>
                             </div>
                         </div>
 
@@ -154,9 +144,11 @@
                 </form>
             </div>
             <br>
-            <div class="col-md-9">
+
+            <!-- Table to display the tags being read -->
+            <div class="col-lg-9">
                 <div id="tagsSection">
-                    <div id="tagsList" class="thead-dark"></div>
+                    <div id="tagsList" class="thead-dark md-2"></div>
                 </div>
             </div>
         </div>
