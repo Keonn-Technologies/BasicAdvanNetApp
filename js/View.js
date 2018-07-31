@@ -145,6 +145,10 @@ View.prototype.setInputNumberMaxValue = function(inputNumber, maxvalue) {
     document.getElementById(inputNumber).max = maxvalue;
 }
 
+View.prototype.getInputNumber = function(inputNumber) {
+    return document.getElementById(inputNumber).value;
+}
+
 /*
     Pre: the ID of a div and the string we want inside the div
     Post: the string is written inside the div
@@ -257,10 +261,10 @@ View.prototype.displaySaveStatus = function(saveStatus) {
 
 View.prototype.getValuesToSave = function() {
     return {
-        power: this.getRangeValue("power"),
-        sensitivity: this.getRangeValue("sensitivity"),
+        power: this.getInputNumber("power"),
+        sensitivity: this.getInputNumber("sensitivity"),
         antennas: this.getActiveAntennas(),
-        volume: this.getRangeValue("volume")
+        volume: this.getInputNumber("volume")
     }
 }
 

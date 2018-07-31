@@ -51,7 +51,7 @@ Network.prototype.putRequest = function(url, body) {
             else 
                 reject(xhttp.statusText);
         }
-        xhttp.onerror = () => reject("Network error: cannot perform PUT request");
+        xhttp.onerror = (error) => reject("Network error: cannot perform PUT request: " + error);
         xhttp.send(body);
     });
 
@@ -252,9 +252,15 @@ Network.prototype.stopReader = function(readerIP) {
 Network.prototype.getInventory = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
+
+            //start reader before getting inventory
             var deviceID = await this.getDeviceId(readerIP);
-            var address = "http://" + readerIP + ":3161/devices/" + deviceID + "/jsonMinLocation"; 
-            var xml = await this.getRequest(address);
+            var startStatus = await this.startReader(readerIP);
+            if (startStatus != "OK")
+                reject(startStatus);
+
+            var url = "http://" + readerIP + ":3161/devices/" + deviceID + "/jsonMinLocation"; 
+            var xml = await this.getRequest(url);
             var jsonItems = JSON.parse(this.controller.getXMLTagValue(xml, "/response/data/result")[0]);
             resolve(jsonItems);
         }
@@ -270,7 +276,7 @@ Network.prototype.saveValues = function(readerIP, values) {
     //save power, sens, antennas, volume
     return new Promise(async (resolve, reject) => {
         try {
-            await this.savePower(readerIP, values.power);
+            //await this.savePower(readerIP, values.power);
             await this.saveSensitivity(readerIP, values.sensitivity);
             await this.saveAntennas(readerIP, values.antennas);
             await this.saveVolume(readerIP, values.volume);
@@ -363,10 +369,32 @@ Network.prototype.createAntennasXML = function(deviceID, activeAntennas) {
 Network.prototype.saveVolume = function(readerIP, volume) {
     return new Promise(async (resolve, reject) => {
         try {
+            var status = await this.modifyVolume(readerIP, volume);
+            resolve(status);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+}
+
+Network.prototype.modifyVolume = function(readerIP, volume) {
+    return new Promise(async (resolve, reject) => {
+        try {
             var deviceID = await this.getDeviceId(readerIP);
-            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/antennas";
-            var xmlbody = this.createAntennasXML(deviceID, activeAntennas); 
-            var xmlresponse = await this.putRequest(url, xmlbody);
+            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/actuatorConf";
+
+            // Get request to obtain actuators config. xml is a document
+            var xml = await this.getRequest(url);
+
+            // Modify all <volume> values for the new volume. 
+            var volumeNodes = xml.getElementsByTagName("volume");   // HTMLCollection
+            for (var i = 0; i < volumeNodes.length; i++) {
+                volumeNodes[i].childNodes[0].nodeValue = volume;
+            }
+
+            // Put request to modify it
+            var xmlresponse = await this.putRequest(url, xml);
             var status = this.controller.getXMLTagValue(xmlresponse, "/response/status")[0];
             if (status == "OK") 
                 resolve(status);

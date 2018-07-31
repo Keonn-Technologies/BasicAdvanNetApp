@@ -232,6 +232,7 @@ Model.prototype.getStatus = function() { return this.status;        }
 /**************** Advanced EPC Table ****************/
 function Table() {
 
+
     this.tableName = "#tagsList";   // table div ID
     this.defaultIndex = "epc";      // column used as an "id"
     this.refreshTime = 5000;
@@ -252,7 +253,7 @@ function Table() {
         height:450, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         layout: "fitColumns", //fit columns to width of table (optional)
         columns: [   //Define Table Columns
-            { title:"EPC", field:"epc", sorter:"string", width:240, headerFilter:"input", responsive:0 },
+            { title:"EPC", field:"epc", topCalc:"count", sorter:"string", width:240, headerFilter:"input", responsive:0 },
             { title:"Antenna", field:"antenna", sorter:"number", width: 120, headerFilter:"input", responsive:0 },
             { title:"Mux 1", field:"mux1", sorter:"number", width: 100, headerFilter:"input" },
             { title:"Mux 2", field:"mux2", sorter:"number", width: 100, headerFilter:"input" },
@@ -262,6 +263,7 @@ function Table() {
     };
 
     this.initializeTable(this.tableSettings);
+    this.hideCalcsHolder();
     //this.populateTable(this.defaultData);     /// useless as you can specify the default data inside the constructor
 }
 
@@ -301,6 +303,15 @@ Table.prototype.refreshTable = () => {
     },this.refreshTime);
 }
 
+Table.prototype.writeNumEPC = function() {
+    var numEPCs = $('#tagsList').tabulator("getCalcResults").top.epc;
+    document.getElementsByClassName("tabulator-col-title")[0].innerHTML = "EPC (" + numEPCs + ")";
+}
+
+Table.prototype.hideCalcsHolder = function() {
+    document.getElementsByClassName("tabulator-calcs-holder")[0].hidden = true;
+}
+
 
 //PRe: array of objects
 Table.prototype.storeInventory = function(JSONinventory) {
@@ -313,5 +324,8 @@ Table.prototype.storeInventory = function(JSONinventory) {
             JSONinventory[read].rssi, 
             JSONinventory[read].ts);
     }
+    this.writeNumEPC();
+    //var numEpcloop = setInterval(this.writeNumEPC, 1000);
+    this.hideCalcsHolder();
 
 }
