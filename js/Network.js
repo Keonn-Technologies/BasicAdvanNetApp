@@ -54,10 +54,6 @@ Network.prototype.putRequest = function(url, body) {
         xhttp.onerror = (error) => reject("Network error: cannot perform PUT request: " + error);
         xhttp.send(body);
     });
-
-
-/* per al volum    //GET http://host_address:3161/devices/{device-id}/actuatorConf*/
-
 }
 
 
@@ -77,23 +73,27 @@ Network.prototype.connectToReader =  function(readerIP) {
                 data: null
             };
 
+        if (readerIP == "" || readerIP == null) {
+            connectionResult.status = "emptyIP";
+            return resolve(connectionResult);
+        }
         if (!this.isValidIP(readerIP)) {
             connectionResult.status = "invalidIP";
-            resolve(connectionResult);
+            return resolve(connectionResult);
         }
         try {
             var XMLRFData = await this.getRFData(readerIP);
     
             if (typeof XMLRFData === 'string')  {   //something went wrong
                 connectionResult.status = "notconnected";
-                resolve(connectionResult);
+                return resolve(connectionResult);
             }
     
             //at this point, we received the RFData successfully as an XML document
             connectionResult.data = XMLRFData;
             connectionResult.status = "connected";
     
-            resolve(connectionResult);
+            return resolve(connectionResult);
         }
         catch(error) {
             reject(error);
@@ -279,7 +279,6 @@ Network.prototype.saveValues = function(readerIP, values) {
             //await this.savePower(readerIP, values.power);
             await this.saveSensitivity(readerIP, values.sensitivity);
             await this.saveAntennas(readerIP, values.antennas);
-            await this.saveVolume(readerIP, values.volume);
             resolve("OK");
         }
         catch(error) {
@@ -287,7 +286,6 @@ Network.prototype.saveValues = function(readerIP, values) {
         }
     });
 }
-
 
 
 //send a put request to the reader
@@ -366,40 +364,13 @@ Network.prototype.createAntennasXML = function(deviceID, activeAntennas) {
 }
 
 
-Network.prototype.saveVolume = function(readerIP, volume) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            var status = await this.modifyVolume(readerIP, volume);
-            resolve(status);
-        }
-        catch(error) {
-            reject(error);
-        }
-    });
-}
-
-Network.prototype.modifyVolume = function(readerIP, volume) {
+Network.prototype.testSpeaker = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
             var deviceID = await this.getDeviceId(readerIP);
-            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/actuatorConf";
-
-            // Get request to obtain actuators config. xml is a document
-            var xml = await this.getRequest(url);
-
-            // Modify all <volume> values for the new volume. 
-            var volumeNodes = xml.getElementsByTagName("volume");   // HTMLCollection
-            for (var i = 0; i < volumeNodes.length; i++) {
-                volumeNodes[i].childNodes[0].nodeValue = volume;
-            }
-
-            // Put request to modify it
-            var xmlresponse = await this.putRequest(url, xml);
-            var status = this.controller.getXMLTagValue(xmlresponse, "/response/status")[0];
-            if (status == "OK") 
-                resolve(status);
-            else
-                reject("Could not save volume");
+            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/speak/1000/4/200/0/200";
+            await this.getRequest(url);
+            resolve();
         }
         catch(error) {
             reject(error);

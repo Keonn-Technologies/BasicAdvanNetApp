@@ -5,6 +5,7 @@ function Controller() {
 
     this.inventoryRefreshTime = 1000;   //ms
     this.inventoryLoop = null;
+    this.isConnected = false;
 }
 
 /* 
@@ -15,9 +16,12 @@ Controller.prototype.connectToReader = async function(readerIP) {
 
     try {
         var connectionResult = await this.net.connectToReader(readerIP);
-        if (connectionResult.status != "connected")
+        if (connectionResult.status != "connected") {
+            this.displayConnectionMessage(connectionResult.status);
             return;
+        }
 
+        this.isConnected = true;
         this.model.setReaderIP(readerIP);
         await this.storeAntennas(readerIP);
         await this.storeReaderInfo(readerIP);
@@ -175,15 +179,6 @@ Controller.prototype.stopInventory = function() {
 }
 
 
-/* settings is an object 
-{ 
-    power: valorpower
-    sens: sensvalue
-    antennas: 
-    volume: 
-}
-*/
-
 Controller.prototype.saveSettings = async function(settings) {
     try {
         var saveStatus = await this.net.saveValues(this.model.readerIP, settings);
@@ -192,6 +187,14 @@ Controller.prototype.saveSettings = async function(settings) {
     }
     catch(error) {
         throw Error(error);
+    }    
+}
+
+Controller.prototype.testSpeaker = async function(readerIP) {
+    try {
+        await this.net.testSpeaker(readerIP);
     }
-    
+    catch(error) {
+        throw Error(error);
+    }   
 }
