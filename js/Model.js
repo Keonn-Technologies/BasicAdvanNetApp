@@ -165,17 +165,6 @@ Model.prototype.getReaderValues = function() {
 }
 
 
-
-/* settings is an object 
-{ 
-    power: valorpower
-    sens: sensvalue
-    antennas: 
-    volume: 
-}
-*/
-
-
 //called after pressing the save button
 Model.prototype.saveValues = function(values) {
     this.setReadPower(values.power);
@@ -250,15 +239,15 @@ function Table() {
         //data: this.defaultData,
         index: this.defaultIndex,
         responsiveLayout: "hide",
-        height:450, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+        height: 400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         layout: "fitColumns", //fit columns to width of table (optional)
         columns: [   //Define Table Columns
             { title:"EPC", field:"epc", topCalc:"count", sorter:"string", width:240, headerFilter:"input", responsive:0 },
-            { title:"Antenna", field:"antenna", sorter:"number", width: 120, headerFilter:"input", responsive:0 },
-            { title:"Mux 1", field:"mux1", sorter:"number", width: 100, headerFilter:"input" },
-            { title:"Mux 2", field:"mux2", sorter:"number", width: 100, headerFilter:"input" },
-            { title:"RSSI", field:"rssi", sorter:"number", width: 100, headerFilter:"input" },
-            { title:"Date", field:"date", sorter:"date", headerFilter:"input" }
+            { title:"Port", field:"antenna", sorter:"number", width: 82, headerFilter:"input", responsive: 0 },
+            { title:"Mux1", field:"mux1", sorter:"number", width: 95, headerFilter:"input" },
+            { title:"Mux2", field:"mux2", sorter:"number", width: 95, headerFilter:"input" },
+            { title:"RSSI", field:"rssi", sorter:"number", width: 90, headerFilter:"input", responsive: 0 },
+            { title:"Date", field:"date", sorter:"date", headerFilter:"input", responsive: 0 }
         ]
     };
 
@@ -270,8 +259,22 @@ function Table() {
 //Initialize Table as tabulator
 Table.prototype.initializeTable = function(tableSettings) {
     $(this.tableName).tabulator(tableSettings);
+    this.initHeaders();
+    this.removeDateArrow();
 }
 
+Table.prototype.initHeaders = function() {
+    var filterBoxes = document.querySelectorAll("#tagsSection input[type=search]");
+    for (var i = 0; i < filterBoxes.length; i++) {
+        filterBoxes[i].classList.add("form-control");
+        filterBoxes[i].placeholder = "filter...";
+    }
+}
+
+Table.prototype.removeDateArrow = function() {
+    var arrows = document.querySelectorAll(".tabulator-arrow");
+    arrows[arrows.length-1].classList.add("d-none");
+}
 
 //Fill the table with data
 Table.prototype.populateTable = function(data) {
@@ -283,7 +286,21 @@ Table.prototype.populateTable = function(data) {
     Post: updates the row if the EPC exists or creates a new row otherwise
 */ 
 Table.prototype.addRowToTable = function(epc, antenna = 1, mux1 = 0, mux2 = 0, rssi = 0, date) {
-    $(this.tableName).tabulator("updateOrAddRow", epc, { epc: epc, antenna: antenna, mux1: mux1, mux2: mux2, rssi: rssi, date: date });
+    $(this.tableName).tabulator("updateOrAddRow", epc, { epc: epc, antenna: antenna, mux1: mux1, mux2: mux2, rssi: rssi, date: this.getCurrentTime() });
+}
+
+Table.prototype.getCurrentTime = function() {
+    var date = new Date();
+
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+
+    // Add a zero when needed
+    hours = hours < 10 ? "0" + hours : hours;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    return hours + ':' + minutes + ':' + seconds;
 }
 
 // Remove all data from the table

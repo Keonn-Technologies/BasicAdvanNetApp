@@ -18,9 +18,9 @@
 
         <!-- Company logo -->
         <div class="row">
-            <div class="col">
+            <div class="col-sm-6 col-lg-3">
                 <header class="my-4">
-                    <img src="img/keonn-logo.png" class="w-25" />
+                    <img src="img/keonn-logo.png" class="w-100" />
                 </header>
             </div>
         </div>
@@ -28,18 +28,20 @@
         <!-- Connect to reader -->
         <div class="row">
             <div class="col-lg-3 mb-lg-4">
-                <div class="input-group mt-4">
+                <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="ipText">IP</span>
                     </div>
                     <input type="text" id="readerIP" class="form-control" aria-label="readerIP" aria-describedby="ipText">
-                    <button type="button" id="connectBtn" class="btn btn-warning">Connect</button>
+                    <div class="input-group-append">
+                        <button type="button" id="connectBtn" class="btn btn-warning">Connect</button>
+                    </div>
                 </div>
             </div>
 
             <!-- Display a success or error message when performing an operation -->
             <div class="col-lg-9">
-                <div class="alert" role="alert" id="operationStatus"></div>
+                <div class="alert p-0" role="alert" id="operationStatus"></div>
             </div>
         </div>
 
@@ -116,7 +118,7 @@
                         
                         </div>
                         
-                        <!-- Volume -->
+                        <!-- Speaker -->
                         <div class="row">
                             <div class="col-2">
                                 <div class="form-group">
@@ -131,7 +133,7 @@
                         <!-- Save button -->
                         <div class="row">
                             <div class="col">
-                                <button id="saveBtn" class="mb-3 btn btn-primary btn-block" type="button">Save</button>
+                                <button id="saveBtn" class="mb-3 mt-2 btn btn-primary btn-block" type="button">Save</button>
                             </div>
                         </div>
                         
@@ -142,17 +144,21 @@
             <br>
 
             <!-- Table to display the tags being read -->
-            <div class="col-lg-9">
+            <div class="col-lg-9 mt-3 mt-lg-0">
                 <div id="tagsSection">
-                    <div id="tagsList" class="thead-dark md-2"></div>
+                    <div id="tagsList" class="thead-dark md-2 border-0 rounded"></div>
                 </div>
             </div>
         </div>
 
+        <!-- Footer -->
+        <div class="row my-5">
+            <div class="col text-right text-black-50">
+                <footer></footer>
+            </div>
+        </div>
+
     </div>
-
-
-    <footer></footer>
 
 
     <!-- Scripts -->

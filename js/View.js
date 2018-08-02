@@ -3,6 +3,7 @@ function View(controller) {
 
     this.readerIP = null;
     this.initializeListeners();
+    //this.roundFilters();
     this.initInputValues();
 }
 
@@ -58,6 +59,7 @@ View.prototype.initializeListeners = function() {
     });
 }
 
+
 View.prototype.initInputValues = function() {
     this.updateDivValue("readerModel", "Reader model");
     this.setInputNumberDefaultValue("power", 25);
@@ -68,7 +70,7 @@ View.prototype.initInputValues = function() {
 
 View.prototype.toggleStartStop = function(startStopButton) {
     if (!this.controller.isConnected) {
-        this.displayOperationStatus("alert-danger", "Unable to start reader. Please, specify an IP");
+        this.displayOperationStatus("alert-danger", "Unable to start reader. Please, specify an IP first.");
         return;
     }
     var action = startStopButton.innerHTML == "Stop" ? "stop" : "start";
@@ -85,10 +87,10 @@ View.prototype.displayConnectionMessage = function(connectionResult) {
 
     switch (connectionResult) {
         case "emptyIP":
-            this.displayOperationStatus("alert-danger", "Please, specify an IP");
+            this.displayOperationStatus("alert-danger", "Please, specify an IP.");
             break;
         case "invalidIP":
-            this.displayOperationStatus("alert-danger", "Please, specify a valid IP");
+            this.displayOperationStatus("alert-danger", "Please, specify a valid IP.");
             break;
         case "notConnected":
             this.displayOperationStatus("alert-danger", "Unable to connect. Does the IP correspond to a reader?");
@@ -97,7 +99,7 @@ View.prototype.displayConnectionMessage = function(connectionResult) {
             this.displayOperationStatus("alert-success", "Connected.");
             break;
         default:
-            this.displayOperationStatus("alert-danger", "Unknown operation");
+            this.displayOperationStatus("alert-danger", "Unknown operation.");
             break;
     }
 }
@@ -266,7 +268,7 @@ View.prototype.getValuesToSave = function() {
 View.prototype.displayOperationStatus = function(bg, text) {
     var div = document.getElementById("operationStatus");
     div.innerHTML = text;
-    div.className = "mt-3 alert " + bg;
+    div.className = "p-2 my-3 my-lg-0 alert " + bg;
 }
 
 View.prototype.increaseInputNumber = function(input) {
