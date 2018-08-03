@@ -4,7 +4,6 @@ function Network(controller)  {
     //params
     this.readPower = "RF_READ_POWER";
     this.sensitivity = "RF_SENSITIVITY";
-    
 }
 
 /* 
@@ -15,7 +14,6 @@ Network.prototype.isValidIP = function(IP) {
     var regexp = /^(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))$/;
     return regexp.test(IP);
 }
-
 
 
 /************ REST API  ************/
@@ -39,7 +37,10 @@ Network.prototype.getRequest = function(url) {
     });
 }
 
-
+/*
+    Pre: an url we want to make the PUT request to and the body of the request
+    Post: a promise with the XML returned or the status of error
+*/
 Network.prototype.putRequest = function(url, body) {
     return new Promise((resolve, reject) => {
         var xhttp = new XMLHttpRequest();
@@ -55,8 +56,6 @@ Network.prototype.putRequest = function(url, body) {
         xhttp.send(body);
     });
 }
-
-
 
 /*  
     Pre: the IP of the reader
@@ -178,7 +177,7 @@ Network.prototype.getReaderInfo = function(readerIP) {
 
 /*
     Pre: the IP of the reader we want to get the active antennas from
-    Post: returns a promise with the XML
+    Post: returns a promise with the XML or the error 
 */    
 Network.prototype.getAntennas = function(readerIP) {
     return new Promise(async (resolve, reject) => {
@@ -193,7 +192,6 @@ Network.prototype.getAntennas = function(readerIP) {
         }
     });
 }
-
 
 /* 
     Pre: the IP of the reader we want to get the status from
@@ -214,7 +212,10 @@ Network.prototype.getReaderStatus = function(readerIP) {
     });
 }
 
-
+/*
+    Pre: the IP of the reader we want to start
+    Post: sends a GET request and returns the status of the reader after performing the operation
+*/
 Network.prototype.startReader = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -231,6 +232,10 @@ Network.prototype.startReader = function(readerIP) {
     });
 }
 
+/*
+    Pre: the IP of the reader we want to stop
+    Post: sends a GET request and returns the status of the reader after performing the operation
+*/
 Network.prototype.stopReader = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -249,6 +254,10 @@ Network.prototype.stopReader = function(readerIP) {
     });
 }
 
+/*
+    Pre: the IP of the reader we want to retrieve the inventory (tags being read) from
+    Post: array of JSON objects, where each object is a TAG
+*/
 Network.prototype.getInventory = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -270,13 +279,14 @@ Network.prototype.getInventory = function(readerIP) {
     });
 }
 
-/* Settings to save when pressing the "Save" button */
-
+/*
+    Pre: the IP of the reader and the values, in JSON, we want to save (power, sensitivity...)
+    Post: returns a promise with OK if the saving process was successful or the error otherwise
+*/
 Network.prototype.saveValues = function(readerIP, values) {
-    //save power, sens, antennas, volume
     return new Promise(async (resolve, reject) => {
         try {
-            //await this.savePower(readerIP, values.power);
+            await this.savePower(readerIP, values.power);
             await this.saveSensitivity(readerIP, values.sensitivity);
             await this.saveAntennas(readerIP, values.antennas);
             resolve("OK");
@@ -287,8 +297,10 @@ Network.prototype.saveValues = function(readerIP, values) {
     });
 }
 
-
-//send a put request to the reader
+/*
+    Pre: the IP of the reader and the value of the power we want to save
+    Post: returns a promise with the status of the operation or the error otherwise
+*/
 Network.prototype.savePower = function(readerIP, power) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -309,7 +321,10 @@ Network.prototype.savePower = function(readerIP, power) {
     });
 }
 
-//send a put request to the reader
+/*
+    Pre: the IP of the reader and the value of the sensitivity we want to save
+    Post: returns a promise with the status of the operation or the error otherwise
+*/
 Network.prototype.saveSensitivity = function(readerIP, sensitivity) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -328,7 +343,11 @@ Network.prototype.saveSensitivity = function(readerIP, sensitivity) {
         }
     });
 }
-//PUT http://host_address:3161/devices/{device-id}/antennas
+
+/*
+    Pre: the IP of the reader and an array of integers with the active antennas
+    Post: returns a promise with the status of the operation or the error otherwise
+*/
 Network.prototype.saveAntennas = function(readerIP, activeAntennas) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -348,7 +367,10 @@ Network.prototype.saveAntennas = function(readerIP, activeAntennas) {
     });
 }
 
-//vector of activeAntennas [1,3]
+/*
+    Pre: the device ID and an array of integers with the active antennas
+    Post: returns a string containing the necessary XML to save the active antennas
+*/
 Network.prototype.createAntennasXML = function(deviceID, activeAntennas) {
     var xml = '<request>' +
                 '<entries>';
@@ -363,7 +385,10 @@ Network.prototype.createAntennasXML = function(deviceID, activeAntennas) {
     return xml;
 }
 
-
+/*
+    Pre: the IP of the reader we want to test 
+    Post: makes the speaker beep if it is connected
+*/
 Network.prototype.testSpeaker = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {

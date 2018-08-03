@@ -5,11 +5,10 @@ function Model(controller) {
 
     /********* device features *********/
     this.readerIP = null;
+
     //power 
     this.minPower = null;
     this.maxPower = null;
-    this.minWritePower = null;  //not used
-    this.readPowerOptions = []; // o string? not used
 
     //Ports/Antennas
     this.numPorts = null;
@@ -19,19 +18,16 @@ function Model(controller) {
     this.maxSensitivity = null;
 
     /********* current values *********/
-    this.model = null;  //code + revision + family
+    this.model = null;            // code + revision + family
     this.code = null;
     this.revision = null;
     this.family = null;
     this.status = null;
     
     this.readPower = null;
-    this.writePower = null;     //not used
     this.sensitivity = null;
-    this.RFRegion = null;       //not used
-    this.activeAntennas = [];         // vector of integers
+    this.activeAntennas = [];     // vector of integers
     this.volume = null;
-
 }
 
 /* 
@@ -109,7 +105,7 @@ Model.prototype.parseAntenna = function(antenna) {
 }
 
 /* 
-    Pre: an XML and a Xpath expression
+    Pre: an XML and an Xpath expression
     Post: an array containing the values of the XML tags that match the Xpath expression
     Does not work with IE
 */
@@ -146,7 +142,10 @@ Model.prototype.getXMLTagValue = function(xml, xpath) {
     }
 }
 
-// Return the reader values to display them on the interface as an object
+/* 
+    Pre: -
+    Post: an object containing the reader values to display on the interface
+*/
 Model.prototype.getReaderValues = function() {
     var readerValues = {
         status: this.getStatus(),
@@ -164,8 +163,10 @@ Model.prototype.getReaderValues = function() {
     return readerValues;
 }
 
-
-//called after pressing the save button
+/* 
+    Pre: an object containing the values we want to save in the model
+    Post: the values are stored in the model
+*/
 Model.prototype.saveValues = function(values) {
     this.setReadPower(values.power);
     this.setSensitivity(values.sensitivity);
@@ -175,55 +176,62 @@ Model.prototype.saveValues = function(values) {
     this.setVolume(values.volume);
 }
 
+/* 
+    Pre: an inventory in JSON
+    Post: stores the inventory in the table
+*/
 Model.prototype.storeInventory = function(JSONinventory) {
     this.table.storeInventory(JSONinventory);
 }
 
+/* 
+    Pre: -
+    Post: clears the table data
+*/
 Model.prototype.clearTable = function() {
     this.table.clearTable();
 }
 
 /********* Setters *********/
-Model.prototype.setMinPower = function(minPower)    {     this.minPower = minPower;         }
-Model.prototype.setMaxPower = function(maxPower)    {     this.maxPower = maxPower;         }
-Model.prototype.setNumPorts = function(numPorts)    {     this.numPorts = numPorts;         }
-Model.prototype.setMinSensitivity = function(minSens) {   this.minSensitivity = minSens;    }
-Model.prototype.setMaxSensitivity = function(maxSens) {   this.maxSensitivity = maxSens;    }
-Model.prototype.setReadPower = function(readPower) {      this.readPower = readPower;       }
-Model.prototype.setWritePower = function(writePower) {    this.writePower = writePower;     }
-Model.prototype.setSensitivity = function(sens) {         this.sensitivity = sens;          }
-Model.prototype.setAntenna = function(antenna) {          this.activeAntennas.push(antenna);      }
-Model.prototype.setVolume = function(volume) {            this.volume = volume;             }
-Model.prototype.setCode = function(code) {                this.code = code;                 }
-Model.prototype.setRevision = function(revision) {        this.revision = revision;         }
-Model.prototype.setFamily = function(family) {            this.family = family;             }
-Model.prototype.setModel = function(model) {              this.model = model;               }
-Model.prototype.setStatus = function(status) {            this.status = status;             }
-Model.prototype.setReaderIP = function(readerIP) {        this.readerIP = readerIP;         }
+Model.prototype.setMinPower = function(minPower)        {   this.minPower = minPower;         }
+Model.prototype.setMaxPower = function(maxPower)        {   this.maxPower = maxPower;         }
+Model.prototype.setNumPorts = function(numPorts)        {   this.numPorts = numPorts;         }
+Model.prototype.setMinSensitivity = function(minSens)   {   this.minSensitivity = minSens;    }
+Model.prototype.setMaxSensitivity = function(maxSens)   {   this.maxSensitivity = maxSens;    }
+Model.prototype.setReadPower = function(readPower)      {   this.readPower = readPower;       }
+Model.prototype.setWritePower = function(writePower)    {   this.writePower = writePower;     }
+Model.prototype.setSensitivity = function(sens)         {   this.sensitivity = sens;          }
+Model.prototype.setAntenna = function(antenna)          {   this.activeAntennas.push(antenna);}
+Model.prototype.setVolume = function(volume)            {   this.volume = volume;             }
+Model.prototype.setCode = function(code)                {   this.code = code;                 }
+Model.prototype.setRevision = function(revision)        {   this.revision = revision;         }
+Model.prototype.setFamily = function(family)            {   this.family = family;             }
+Model.prototype.setModel = function(model)              {   this.model = model;               }
+Model.prototype.setStatus = function(status)            {   this.status = status;             }
+Model.prototype.setReaderIP = function(readerIP)        {   this.readerIP = readerIP;         }
 
 /********* Getters *********/
-Model.prototype.getNumPorts = function() {  return this.numPorts;    }
-Model.prototype.getMinPower = function() {  return this.minPower;    }
-Model.prototype.getMaxPower = function() {  return this.maxPower;    }
-Model.prototype.getReadPower = function() { return this.readPower;   }
-Model.prototype.getMinSensitivity = function() { return this.minSensitivity; }
-Model.prototype.getMaxSensitivity = function() { return this.maxSensitivity; }
-Model.prototype.getSensitivity = function() { return this.sensitivity; }
-Model.prototype.getVolume = function() { return this.volume;        }
-Model.prototype.getModel = function() { return this.model;          }
-Model.prototype.getCode = function() { return this.code;            }
-Model.prototype.getRevision = function() { return this.revision;    }
-Model.prototype.getFamily = function() { return this.family;        }
-Model.prototype.getActiveAntennas = function() { return this.activeAntennas;    }
-Model.prototype.getStatus = function() { return this.status;        }
+Model.prototype.getNumPorts = function()                {   return this.numPorts;       }
+Model.prototype.getMinPower = function()                {   return this.minPower;       }
+Model.prototype.getMaxPower = function()                {   return this.maxPower;       }
+Model.prototype.getReadPower = function()               {   return this.readPower;      }
+Model.prototype.getMinSensitivity = function()          {   return this.minSensitivity; }
+Model.prototype.getMaxSensitivity = function()          {   return this.maxSensitivity; }
+Model.prototype.getSensitivity = function()             {   return this.sensitivity;    }
+Model.prototype.getVolume = function()                  {   return this.volume;         }
+Model.prototype.getModel = function()                   {   return this.model;          }
+Model.prototype.getCode = function()                    {   return this.code;           }
+Model.prototype.getRevision = function()                {   return this.revision;       }
+Model.prototype.getFamily = function()                  {   return this.family;         }
+Model.prototype.getActiveAntennas = function()          {   return this.activeAntennas; }
+Model.prototype.getStatus = function()                  {   return this.status;         }
 
 
 /**************** Advanced EPC Table ****************/
 function Table() {
 
-
     this.tableName = "#tagsList";   // table div ID
-    this.defaultIndex = "epc";      // column used as an "id"
+    this.defaultIndex = "epc";      
     this.refreshTime = 5000;
 
     //default (test) table data
@@ -236,12 +244,12 @@ function Table() {
 
     //Initialize table columns
     this.tableSettings = {
-        //data: this.defaultData,
-        index: this.defaultIndex,
+        //data: this.defaultData,       // uncomment if you want to add data by default in the table
+        index: this.defaultIndex,       // column used as an "id"
         responsiveLayout: "hide",
-        height: 400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-        layout: "fitColumns", //fit columns to width of table (optional)
-        columns: [   //Define Table Columns
+        height: 400,                    // set height of table
+        layout: "fitColumns",           // fit columns to width of table (optional)
+        columns: [                      // define Table Columns
             { title:"EPC", field:"epc", topCalc:"count", sorter:"string", width:240, headerFilter:"input", responsive:0 },
             { title:"Port", field:"antenna", sorter:"number", width: 82, headerFilter:"input", responsive: 0 },
             { title:"Mux1", field:"mux1", sorter:"number", width: 95, headerFilter:"input" },
@@ -253,16 +261,22 @@ function Table() {
 
     this.initializeTable(this.tableSettings);
     this.hideCalcsHolder();
-    //this.populateTable(this.defaultData);     /// useless as you can specify the default data inside the constructor
 }
 
-//Initialize Table as tabulator
+/* 
+    Pre: an object containing the settings of the table
+    Post: initializes the table
+*/
 Table.prototype.initializeTable = function(tableSettings) {
     $(this.tableName).tabulator(tableSettings);
     this.initHeaders();
     this.removeDateArrow();
 }
 
+/* 
+    Pre: -
+    Post: adds bootstrap CSS class to the table headers
+*/
 Table.prototype.initHeaders = function() {
     var filterBoxes = document.querySelectorAll("#tagsSection input[type=search]");
     for (var i = 0; i < filterBoxes.length; i++) {
@@ -271,12 +285,19 @@ Table.prototype.initHeaders = function() {
     }
 }
 
+/* 
+    Pre: -
+    Post: removes the arrow from the date column
+*/
 Table.prototype.removeDateArrow = function() {
     var arrows = document.querySelectorAll(".tabulator-arrow");
     arrows[arrows.length-1].classList.add("d-none");
 }
 
-//Fill the table with data
+/* 
+    Pre: an object with data
+    Post: if the data exists, it updates it or adds it otherwise
+*/
 Table.prototype.populateTable = function(data) {
     $(this.tableName).tabulator("updateOrAddData", data);
 }
@@ -289,6 +310,10 @@ Table.prototype.addRowToTable = function(epc, antenna = 1, mux1 = 0, mux2 = 0, r
     $(this.tableName).tabulator("updateOrAddRow", epc, { epc: epc, antenna: antenna, mux1: mux1, mux2: mux2, rssi: rssi, date: this.getCurrentTime() });
 }
 
+/* 
+    Pre: -
+    Post: the current time in HH:MM:SS format
+*/ 
 Table.prototype.getCurrentTime = function() {
     var date = new Date();
 
@@ -303,34 +328,53 @@ Table.prototype.getCurrentTime = function() {
     return hours + ':' + minutes + ':' + seconds;
 }
 
-// Remove all data from the table
+/* 
+    Pre: -
+    Post: removes all data from the table
+*/ 
 Table.prototype.clearTable = function() {
     $(this.tableName).tabulator("clearData");
 }
 
-// Make sure rows and columns are rendered correctly
+/* 
+    Pre: -
+    Post: redraws the table 
+*/ 
 Table.prototype.redrawTable = function() {
     $(this.tableName).tabulator("redraw");
 }
 
-// Refresh the table every resfreshTime ms
+/* 
+    Pre: -
+    Post: refreshes the table every resfreshTime ms
+*/
 Table.prototype.refreshTable = () => {
     setInterval(() => {
         $(this.tableName).tabulator("redraw");
     },this.refreshTime);
 }
 
+/* 
+    Pre: -
+    Post: writes the EPCs being read in the table header
+*/
 Table.prototype.writeNumEPC = function() {
     var numEPCs = $('#tagsList').tabulator("getCalcResults").top.epc;
     document.getElementsByClassName("tabulator-col-title")[0].innerHTML = "EPC (" + numEPCs + ")";
 }
 
+/* 
+    Pre: -
+    Post: hides the header created when activating the topCalc functions
+*/
 Table.prototype.hideCalcsHolder = function() {
     document.getElementsByClassName("tabulator-calcs-holder")[0].hidden = true;
 }
 
-
-//PRe: array of objects
+/* 
+    Pre: array of objects containing the inventory
+    Post: displays the inventory in the table, as well as the number of EPCs being read
+*/
 Table.prototype.storeInventory = function(JSONinventory) {
     for (var read in JSONinventory) {
         this.addRowToTable(
@@ -342,7 +386,5 @@ Table.prototype.storeInventory = function(JSONinventory) {
             JSONinventory[read].ts);
     }
     this.writeNumEPC();
-    //var numEpcloop = setInterval(this.writeNumEPC, 1000);
     this.hideCalcsHolder();
-
 }

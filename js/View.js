@@ -6,6 +6,10 @@ function View(controller) {
     this.initInputValues();
 }
 
+/* 
+    Pre: -
+    Post: initilizes all buttons so you can press them, increase the power, etc
+*/
 View.prototype.initializeListeners = function() {
 
     var that = this;
@@ -43,10 +47,6 @@ View.prototype.initializeListeners = function() {
     increasePower.addEventListener("click", function(event) {
         that.increaseInputNumber("power");
     });
-    increasePower.addEventListener("mousedown", function(event) {
-        that.increaseInputNumber("power");
-    });
-
 
     var decreasePower = document.getElementById("decreasePower");
     decreasePower.addEventListener("click", function(event) {
@@ -71,7 +71,10 @@ View.prototype.initializeListeners = function() {
     });
 }
 
-
+/* 
+    Pre: -
+    Post: initizalize the settings to some random values
+*/
 View.prototype.initInputValues = function() {
     this.updateDivValue("readerModel", "Reader model");
     this.setInputNumberDefaultValue("power", 25);
@@ -79,7 +82,10 @@ View.prototype.initInputValues = function() {
     this.displayAntennas(4, [1]);
 }
 
-
+/* 
+    Pre: the HTML element containing the button to start or stop the reader
+    Post: detects if you need to start or stop the reader and asks the controller to do it
+*/
 View.prototype.toggleStartStop = function(startStopButton) {
     if (!this.controller.isConnected) {
         this.displayOperationStatus("alert-danger", "Unable to start reader. Please, specify an IP first.");
@@ -89,12 +95,19 @@ View.prototype.toggleStartStop = function(startStopButton) {
     this.controller.updateReaderStatus(this.readerIP, action);
 }
 
-/* Connect to reader event */
+/* 
+    Pre: -
+    Post: sends the IP written in the input text to the controller
+*/
 View.prototype.connectToReader = function() {
     this.readerIP = document.getElementById("readerIP").value;
     this.controller.connectToReader(this.readerIP);
 }
 
+/* 
+    Pre: a string containing the result of the connection to the reader
+    Post: writes on the GUI the result with the corresponding color and text
+*/
 View.prototype.displayConnectionMessage = function(connectionResult) {
 
     switch (connectionResult) {
@@ -116,7 +129,10 @@ View.prototype.displayConnectionMessage = function(connectionResult) {
     }
 }
 
-// Display reader options default values on the interface
+/* 
+    Pre: an object containing the RF values of the reader (power, sensitivity...)
+    Post: displays the default reader values on the interface
+*/
 View.prototype.displayReaderValues = function(readerValues) {
 
     // Status
@@ -139,22 +155,35 @@ View.prototype.displayReaderValues = function(readerValues) {
     this.displayAntennas(readerValues.numPorts, readerValues.activeAntennas);
 }
 
+/* 
+    Pre: an HTML element containing an <input type="number"> and the value to assign to this input number
+    Post: updates the input type number with the new value
+*/
 View.prototype.setInputNumberDefaultValue = function(inputNumber, value) {
     var inputNumber = document.getElementById(inputNumber);
     inputNumber.value = value;
-    inputNumber.dataset.oldValue = value;
 }
 
-// Set the minimum value of any range reader options
+/* 
+    Pre: an HTML element containing an <input type="number"> and the MIN value to assign to this input number
+    Post: sets the minimum value to this input
+*/
 View.prototype.setInputNumberMinValue = function(inputNumber, minvalue) {
     document.getElementById(inputNumber).min = minvalue;
 }
 
-// Set the maximum value of any range reader options
+/* 
+    Pre: an HTML element containing an <input type="number"> and the MAX value to assign to this input number
+    Post: sets the maximum value to this input
+*/
 View.prototype.setInputNumberMaxValue = function(inputNumber, maxvalue) {
     document.getElementById(inputNumber).max = maxvalue;
 }
 
+/* 
+    Pre: an HTML element containing an <input type="number">
+    Post: the value of this input
+*/
 View.prototype.getInputNumber = function(inputNumber) {
     return document.getElementById(inputNumber).value;
 }
@@ -167,10 +196,18 @@ View.prototype.updateDivValue = function(divID, value) {
     document.getElementById(divID).innerHTML = value;
 }
 
+/* 
+    Pre: the ID of a div
+    Post: the HTML content of the div
+*/
 View.prototype.getDivValue = function(divID) {
     return document.getElementById(divID).innerHTML;
 }
 
+/* 
+    Pre: -
+    Post: returns an array of integers containing the antennas marked as active on the GUI
+*/
 View.prototype.getActiveAntennas = function() {
     
     var activeAntennas = [];
@@ -184,7 +221,7 @@ View.prototype.getActiveAntennas = function() {
 }
 
 /* 
-    Pre: the number of RF ports of the reader and a vector with all the active antennas
+    Pre: the number of RF ports of the reader and a vector (of integers) with all the active antennas
     Post: displays all the reader antennas with a checked checkbox if the antenna is active or not checked otherwise
 */
 View.prototype.displayAntennas = function(numPorts, activeAntennas) {
@@ -207,8 +244,8 @@ View.prototype.displayAntennas = function(numPorts, activeAntennas) {
 }
 
 /*
-    Pre: an antenna port and all the active antennas
-    Post: an string like "checked" if the antenna port is active or an empty string otherwise
+    Pre: an antenna port and all the active antennas (vector of integers)
+    Post: an string containing the CSS classes to add depending on if the port is active or not.
 */
 View.prototype.isActiveAntenna = function(port, activeAntennas) {
     for (var a in activeAntennas) {
@@ -259,6 +296,10 @@ View.prototype.displayReaderStatus = function(status) {
     document.getElementById("connectBtn").innerHTML = "Update";
 }
 
+/* 
+    Pre: an string with the saving process status
+    Post: displays the result on the GUI with the corresponding text and color
+*/
 View.prototype.displaySaveStatus = function(saveStatus) {
 
     switch (saveStatus) {
@@ -271,6 +312,10 @@ View.prototype.displaySaveStatus = function(saveStatus) {
     }
 }
 
+/* 
+    Pre: -
+    Post: returns an object containing the modified values to save
+*/
 View.prototype.getValuesToSave = function() {
     return {
         power: this.getInputNumber("power"),
@@ -279,26 +324,42 @@ View.prototype.getValuesToSave = function() {
     }
 }
 
+/* 
+    Pre: an string containing the color of the background (alert-success || alert-danger...) and the text to display on the GUI
+    Post: displays the text on the GUI with the given background color
+*/
 View.prototype.displayOperationStatus = function(bg, text) {
     var div = document.getElementById("operationStatus");
     div.innerHTML = text;
     div.className = "p-2 my-3 my-lg-0 alert " + bg;
 }
 
-View.prototype.increaseInputNumber = function(input) {
-    if (input === "sensitivity")
+/* 
+    Pre: the name of the HTML input number
+    Post: increases the value of the input number according to its step
+*/
+View.prototype.increaseInputNumber = function(inputName) {
+    if (inputName === "sensitivity")
         document.getElementById(input).stepDown();
     else 
         document.getElementById(input).stepUp();
 }
 
-View.prototype.decreaseInputNumber = function(input) {
-    if (input === "sensitivity")
+/* 
+    Pre: the name of the HTML input number
+    Post: decreases the value of the input number according to its step
+*/
+View.prototype.decreaseInputNumber = function(inputName) {
+    if (inputName === "sensitivity")
         document.getElementById(input).stepUp();
     else
         document.getElementById(input).stepDown();
 }
 
+/*  
+    Pre: the IP of the reader
+    Post: asks the controller to test the speaker
+*/
 View.prototype.testSpeaker = function(readerIP) {
     this.controller.testSpeaker(readerIP);
 }

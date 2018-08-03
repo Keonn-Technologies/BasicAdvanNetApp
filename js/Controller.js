@@ -51,6 +51,10 @@ Controller.prototype.storeRFData = function(XMLRFData) {
     });
 }
 
+/*
+    Pre: the IP of the reader
+    Post: obtains the info of the reader and saves it in the model
+*/
 Controller.prototype.storeReaderInfo = function(readerIP) {
     return new Promise(async (resolve, reject) => { 
         try {
@@ -63,7 +67,6 @@ Controller.prototype.storeReaderInfo = function(readerIP) {
         }
     });
 }
-
 
 /*
     Pre: a string, e.g "Connected"
@@ -90,6 +93,10 @@ Controller.prototype.storeReaderVolume = async function(readerIP) {
     });
 }
 
+/*
+    Pre: the IP of the reader we want to store the antennas to
+    Post: stores the antennas in the model
+*/
 Controller.prototype.storeAntennas = function(readerIP) {
     return new Promise(async (resolve, reject) => {    
         try {
@@ -120,6 +127,10 @@ Controller.prototype.displayReaderValues = function() {
     this.view.displayReaderValues(readerValues);
 }
 
+/* 
+    Pre: the IP of the reader and the action to perform (start || stop)
+    Post: returns a promise with the error if applies
+*/
 Controller.prototype.updateReaderStatus = function(readerIP, action) {
     return new Promise(async (resolve, reject) => {    
         try {
@@ -144,13 +155,18 @@ Controller.prototype.updateReaderStatus = function(readerIP, action) {
     });
 }
 
-
-/* Dynamic table stuff */
+/* 
+    Pre: the values to display in the table
+    Post: adds the values to the table
+*/
 Controller.prototype.addRowToTable = function(epc, antenna, mux1, mux2, rssi, date) {
     this.model.addRowToTable(epc, antenna, mux1, mux2, rssi, date);
 }
 
-
+/* 
+    Pre: the IP of the reader we want to retrieve the inventory from
+    Post: stores the inventory in the table
+*/
 Controller.prototype.updateInventory = async function (readerIP) {
     try {
         var JSONinventory = await this.net.getInventory(readerIP);
@@ -162,7 +178,10 @@ Controller.prototype.updateInventory = async function (readerIP) {
     }
 }
 
-//run inventory every X seconds
+/* 
+    Pre: the IP of the reader we want to retrieve the inventory from
+    Post: runs inventory every inventoryRefreshTime seconds 
+*/
 Controller.prototype.startInventory = function(readerIP) {
     var that = this;
     if (this.inventoryLoop)
@@ -173,12 +192,18 @@ Controller.prototype.startInventory = function(readerIP) {
     }, this.inventoryRefreshTime);
 }
 
-//stop fetching inventory
+/* 
+    Pre: -
+    Post: stops fetching the inventory
+*/
 Controller.prototype.stopInventory = function() {
     clearInterval(this.inventoryLoop);
 }
 
-
+/*
+    Pre: an object containing the settings to save
+    Post: saves the values in the model and displays the save process result on the GUI
+*/
 Controller.prototype.saveSettings = async function(settings) {
     try {
         var saveStatus = await this.net.saveValues(this.model.readerIP, settings);
@@ -190,6 +215,10 @@ Controller.prototype.saveSettings = async function(settings) {
     }    
 }
 
+/* 
+    Pre: the IP of the reader we want to test
+    Post: tests the speaker
+*/
 Controller.prototype.testSpeaker = async function(readerIP) {
     try {
         await this.net.testSpeaker(readerIP);
