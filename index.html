@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Basic Advannet App</title>
-
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/tabulator/tabulator.min.css">
     <link rel="stylesheet" href="css/tabulator/tabulator_bootstrap4.min.css">
     <link rel="stylesheet" href="css/keonn-style.css">
-
 </head>
 <body>
 
@@ -85,9 +83,9 @@
                             </div>
 
                             <div class="col-9 text-right">
-                                <img id="decreasePower" src="img/minus.svg" class="d-xl-none numModifier"></img>
-                                <input type="number" id="power" class="form-control d-inline" min="0" max="31" step="0.5">
-                                <img id="increasePower" src="img/plus.svg" class="d-xl-none numModifier"></img>
+                                <img id="decreasePower" src="img/minus.svg" class="d-xl-none"></img>
+                                <input type="number" id="power" class="form-control d-inline" pattern="[0-9]" min="0" max="31" step="0.5">
+                                <img id="increasePower" src="img/plus.svg" class="d-xl-none"></img>
                             </div>
                         </div>
 
@@ -100,9 +98,9 @@
                             </div>
                             
                             <div class="col-9 text-right">
-                                <img id="decreaseSensitivity" src="img/minus.svg" class="d-xl-none numModifier"></img>
-                                <input type="number" id="sensitivity" class="form-control d-inline" min="-75" max="-35" step="1">
-                                <img id="increaseSensitivity" src="img/plus.svg" class="d-xl-none numModifier"></img>
+                                <img id="decreaseSensitivity" src="img/minus.svg" class="d-xl-none"></img>
+                                <input type="number" id="sensitivity" class="form-control d-inline" pattern="[0-9]" min="-75" max="-35" step="1">
+                                <img id="increaseSensitivity" src="img/plus.svg" class="d-xl-none"></img>
                             </div>
                         </div>
                         

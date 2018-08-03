@@ -3,7 +3,6 @@ function View(controller) {
 
     this.readerIP = null;
     this.initializeListeners();
-    //this.roundFilters();
     this.initInputValues();
 }
 
@@ -15,6 +14,15 @@ View.prototype.initializeListeners = function() {
     var connectBtn = document.getElementById("connectBtn");
     connectBtn.addEventListener("click", function (event) {
         that.connectToReader();
+    });
+
+    // Submit IP when pressing enter
+    var readerIPInput = document.getElementById("readerIP");
+    readerIPInput.addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {     // enter key
+            connectBtn.click();
+        }
     });
 
     // Start/stop button
@@ -35,6 +43,10 @@ View.prototype.initializeListeners = function() {
     increasePower.addEventListener("click", function(event) {
         that.increaseInputNumber("power");
     });
+    increasePower.addEventListener("mousedown", function(event) {
+        that.increaseInputNumber("power");
+    });
+
 
     var decreasePower = document.getElementById("decreasePower");
     decreasePower.addEventListener("click", function(event) {
@@ -119,8 +131,8 @@ View.prototype.displayReaderValues = function(readerValues) {
     this.setInputNumberDefaultValue("power", readerValues.readPower);
 
     // Sensitivity
-    this.setInputNumberMinValue("sensitivity", readerValues.minSensitivity);
-    this.setInputNumberMaxValue("sensitivity", readerValues.maxSensitivity);
+    this.setInputNumberMinValue("sensitivity", readerValues.maxSensitivity);
+    this.setInputNumberMaxValue("sensitivity", readerValues.minSensitivity);
     this.setInputNumberDefaultValue("sensitivity", readerValues.sensitivity);
 
     // Antennas
@@ -128,7 +140,9 @@ View.prototype.displayReaderValues = function(readerValues) {
 }
 
 View.prototype.setInputNumberDefaultValue = function(inputNumber, value) {
-    document.getElementById(inputNumber).value = value;
+    var inputNumber = document.getElementById(inputNumber);
+    inputNumber.value = value;
+    inputNumber.dataset.oldValue = value;
 }
 
 // Set the minimum value of any range reader options
@@ -272,21 +286,17 @@ View.prototype.displayOperationStatus = function(bg, text) {
 }
 
 View.prototype.increaseInputNumber = function(input) {
-    var inputNumber = document.getElementById(input);
-    var currentValue = parseInt(inputNumber.value, 10);
-    var maxValue = parseInt(inputNumber.max, 10);
-
-    if (currentValue < maxValue)
-        inputNumber.value += parseInt(inputNumber.step, 10);
+    if (input === "sensitivity")
+        document.getElementById(input).stepDown();
+    else 
+        document.getElementById(input).stepUp();
 }
 
 View.prototype.decreaseInputNumber = function(input) {
-    var inputNumber = document.getElementById(input);
-    var currentValue = parseInt(inputNumber.value, 10);
-    var minValue = parseInt(inputNumber.min, 10);
-
-    if (currentValue > minValue)
-        inputNumber.value -= parseInt(inputNumber.step, 10);
+    if (input === "sensitivity")
+        document.getElementById(input).stepUp();
+    else
+        document.getElementById(input).stepDown();
 }
 
 View.prototype.testSpeaker = function(readerIP) {
