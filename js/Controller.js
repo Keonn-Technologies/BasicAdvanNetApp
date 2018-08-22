@@ -31,6 +31,7 @@ Controller.prototype.connectToReader = async function(readerIP) {
         this.displayReaderValues();
     }
     catch(error) {
+        this.displayConnectionMessage("netError");
         throw Error(error);
     }
 }
@@ -141,9 +142,13 @@ Controller.prototype.updateReaderStatus = function(readerIP, action) {
             else if (action == "stop") {
                 await this.net.stopReader(readerIP);
                 this.stopInventory();
-            }                
+            }      
+            else if (action == "update") {
+                //update the status of the reader but don't display any special message
+            }
             else
                 reject("unknown operation");
+            
             var status = await this.net.getReaderStatus(readerIP);
             this.model.setStatus(status);
             this.view.displayReaderStatus(status);
@@ -174,7 +179,9 @@ Controller.prototype.updateInventory = async function (readerIP) {
         this.model.storeInventory(JSONinventory);
     }
     catch(error) {
-        throw Error(error);
+        this.view.displayOperationStatus("alert-danger", error);
+        this.updateReaderStatus(readerIP, "update");
+        //throw Error(error);
     }
 }
 

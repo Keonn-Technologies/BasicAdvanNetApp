@@ -11,6 +11,10 @@ img {
     height: auto;
 }
 
+#speaker {
+    cursor: pointer;
+}
+
 /* input type=number */
 #power, #sensitivity, #volume {
     width: 5em;

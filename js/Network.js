@@ -84,7 +84,7 @@ Network.prototype.connectToReader =  function(readerIP) {
             var XMLRFData = await this.getRFData(readerIP);
     
             if (typeof XMLRFData === 'string')  {   //something went wrong
-                connectionResult.status = "notconnected";
+                connectionResult.status = "notConnected";
                 return resolve(connectionResult);
             }
     
@@ -261,15 +261,14 @@ Network.prototype.stopReader = function(readerIP) {
 Network.prototype.getInventory = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
-
-            //start reader before getting inventory
             var deviceID = await this.getDeviceId(readerIP);
-            var startStatus = await this.startReader(readerIP);
-            if (startStatus != "OK")
-                reject(startStatus);
-
             var url = "http://" + readerIP + ":3161/devices/" + deviceID + "/jsonMinLocation"; 
             var xml = await this.getRequest(url);
+            var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
+            if (status == "ERROR") {
+                var msg = this.controller.getXMLTagValue(xml, "/response/msg")[0];
+                reject(msg);
+            }
             var jsonItems = JSON.parse(this.controller.getXMLTagValue(xml, "/response/data/result")[0]);
             resolve(jsonItems);
         }

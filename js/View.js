@@ -4,6 +4,8 @@ function View(controller) {
     this.readerIP = null;
     this.initializeListeners();
     this.initInputValues();
+
+    this.disableSaving();
 }
 
 /* 
@@ -39,7 +41,19 @@ View.prototype.initializeListeners = function() {
     var saveBtn = document.getElementById("saveBtn");
     saveBtn.addEventListener("click", function(event) {
         var values = that.getValuesToSave();
-        that.controller.saveSettings(values);
+
+        // Not connected to any reader
+        if (!values) {
+            that.displayConnectionMessage("notConnected");
+            return;
+        }
+
+        if (values.antennas.length > 0) {
+            that.controller.saveSettings(values);
+        }
+        else {
+            that.displaySaveStatus("noAntennas");
+        }
     });
 
     // Power
@@ -117,11 +131,14 @@ View.prototype.displayConnectionMessage = function(connectionResult) {
         case "invalidIP":
             this.displayOperationStatus("alert-danger", "Please, specify a valid IP.");
             break;
-        case "notConnected":
-            this.displayOperationStatus("alert-danger", "Unable to connect. Does the IP correspond to a reader?");
+        case "netError":
+            this.displayOperationStatus("alert-danger", "Network error: device is unreachable. Is CORS enabled?");
             break;
         case "connected":
             this.displayOperationStatus("alert-success", "Connected.");
+            break;
+        case "notConnected":
+            this.displayOperationStatus("alert-danger", "Please, connect to a reader first.");
             break;
         default:
             this.displayOperationStatus("alert-danger", "Unknown operation.");
@@ -265,24 +282,36 @@ View.prototype.displayReaderStatus = function(status) {
     var bg = null;
     var baseclasses = "col m-3 alert ";
     var buttonText = null;
+    var saveButtonText = null;
 
     switch (status) {
         case "RUNNING":
             bg = baseclasses + "alert-success";
             buttonText = "Stop";
+            this.disableSaving();
+            this.disableSorting();
+            this.disableFiltering();
             this.controller.startInventory(this.readerIP);
+            saveButtonText = this.controller.isConnected ? 'Stop the reader to save' : 'Not connected';
             break;
         case "STOPPED":
             bg = baseclasses + "alert-danger";
             buttonText = "Start";
+            saveButtonText = 'Save';
+            this.enableSaving();
+            this.enableSorting();
+            this.enableFiltering();
+            this.controller.stopInventory();
             break;
         case "CONNECTED":
             bg = baseclasses + "alert-primary";
             buttonText = "Start";
+            saveButtonText = 'Save';
             break;
         case "SHUTDOWN":
             bg = baseclasses + "alert-dark";
             buttonText = "Start";
+            saveButtonText = 'Shutdown';
             break;
         default:
             bg = baseclasses + "alert-light";
@@ -290,10 +319,21 @@ View.prototype.displayReaderStatus = function(status) {
             break;
     }
 
+    document.getElementById("saveBtn").innerHTML = saveButtonText;
     document.getElementById("statusBg").className = bg;
     document.getElementById("statusText").innerHTML = status;
     document.getElementById("startStopButton").innerHTML = buttonText;
     document.getElementById("connectBtn").innerHTML = "Update";
+}
+
+/*
+    Pre: -
+    Post: changes the background and text of the alert so that it's no longer visible to the user
+*/
+View.prototype.closeAlert = function() {
+    var alert = document.getElementById("operationStatus");
+    alert.innerHTML = '';
+    alert.classList = 'alert p-0';
 }
 
 /* 
@@ -304,11 +344,102 @@ View.prototype.displaySaveStatus = function(saveStatus) {
 
     switch (saveStatus) {
         case "OK":
-            this.displayOperationStatus("alert-success", "Settings saved");
+            this.displayOperationStatus("alert-success", "Settings saved.");
+            break;
+        case "noAntennas":
+            this.displayOperationStatus("alert-danger", "Please specify at least one antenna.");
             break;
         default:
-            this.displayOperationStatus("alert-danger", "Error saving settings");
+            this.displayOperationStatus("alert-danger", "Error saving settings.");
             break;
+    }
+}
+
+/*
+    Pre: - 
+    Post: enables the save button and changes its text and cursor pointer
+*/
+View.prototype.enableSaving = function() {
+
+    //input types
+    document.getElementById("sensitivity").disabled = false;
+    document.getElementById("power").disabled = false;
+
+    //decrease/increase buttons
+    document.getElementById("decreasePower").style.display = 'inline';
+    document.getElementById("increasePower").style.display = 'inline';
+    document.getElementById("decreaseSensitivity").style.display = 'inline';
+    document.getElementById("increaseSensitivity").style.display = 'inline';
+
+    //save button
+    var saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = false;
+    saveBtn.style.cursor = 'pointer';
+}
+
+/*
+    Pre: - 
+    Post: disables the save button and changes its text and cursor pointer
+*/
+View.prototype.disableSaving = function() {
+
+    //input types
+    document.getElementById("sensitivity").disabled = true;
+    document.getElementById("power").disabled = true;
+
+    //decrease/increase buttons
+    document.getElementById("decreasePower").style.display = 'none';
+    document.getElementById("increasePower").style.display = 'none';
+    document.getElementById("decreaseSensitivity").style.display = 'none';
+    document.getElementById("increaseSensitivity").style.display = 'none';
+
+    //save button
+    var saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = true;
+    saveBtn.style.cursor = 'not-allowed';
+}
+
+/*
+    Pre: -
+    Post: displays the arrows of the table headers to notify the column sorting is enabled
+*/
+View.prototype.enableSorting = function() {
+    var sortingArrows = document.querySelectorAll(".tabulator-arrow");
+    for (var arrow = 0; arrow < sortingArrows.length -1; arrow++) {
+        sortingArrows[arrow].classList.remove("d-none");
+    }
+}
+
+/*
+    Pre:
+    Post: hides the arrows of the table headers to notify the column sorting is disabled
+*/
+View.prototype.disableSorting = function() {
+    var sortingArrows = document.querySelectorAll(".tabulator-arrow");
+    for (var arrow = 0; arrow < sortingArrows.length -1; arrow++) {
+        sortingArrows[arrow].classList.add("d-none");
+    }
+}
+
+/*
+    Pre: -
+    Post: enables the input type search of the table headers so that column filtering is enabled
+*/
+View.prototype.enableFiltering = function() {
+    var filters = document.querySelectorAll("#tagsList input[type=search]");
+    for (var i = 0; i < filters.length; i++) {
+        filters[i].disabled = false;
+    }
+}
+
+/*
+    Pre: -
+    Post: disables the input type search of the table headers so that column filtering is disabled
+*/
+View.prototype.disableFiltering = function() {
+    var filters = document.querySelectorAll("#tagsList input[type=search]");
+    for (var i = 0; i < filters.length; i++) {
+        filters[i].disabled = true;
     }
 }
 
@@ -317,6 +448,10 @@ View.prototype.displaySaveStatus = function(saveStatus) {
     Post: returns an object containing the modified values to save
 */
 View.prototype.getValuesToSave = function() {
+
+    if (!this.controller.isConnected)
+        return;
+
     return {
         power: this.getInputNumber("power"),
         sensitivity: this.getInputNumber("sensitivity"),
@@ -330,8 +465,14 @@ View.prototype.getValuesToSave = function() {
 */
 View.prototype.displayOperationStatus = function(bg, text) {
     var div = document.getElementById("operationStatus");
-    div.innerHTML = text;
+    div.innerHTML = text +    
+        '<button type="button" id="closeBtn" class="close" aria-label="Close">' +
+            '<span aria-hidden="true">&times;</span>' +
+        '</button>';
     div.className = "p-2 my-3 my-lg-0 alert " + bg;
+    var closeBtn = document.getElementById("closeBtn");
+    closeBtn.classList.remove("d-none");
+    closeBtn.addEventListener("click", (event) => this.closeAlert());
 }
 
 /* 
@@ -340,9 +481,9 @@ View.prototype.displayOperationStatus = function(bg, text) {
 */
 View.prototype.increaseInputNumber = function(inputName) {
     if (inputName === "sensitivity")
-        document.getElementById(input).stepDown();
+        document.getElementById(inputName).stepDown();
     else 
-        document.getElementById(input).stepUp();
+        document.getElementById(inputName).stepUp();
 }
 
 /* 
@@ -351,9 +492,9 @@ View.prototype.increaseInputNumber = function(inputName) {
 */
 View.prototype.decreaseInputNumber = function(inputName) {
     if (inputName === "sensitivity")
-        document.getElementById(input).stepUp();
+        document.getElementById(inputName).stepUp();
     else
-        document.getElementById(input).stepDown();
+        document.getElementById(inputName).stepDown();
 }
 
 /*  
@@ -361,5 +502,8 @@ View.prototype.decreaseInputNumber = function(inputName) {
     Post: asks the controller to test the speaker
 */
 View.prototype.testSpeaker = function(readerIP) {
+    if (!this.controller.isConnected)
+        return;
+
     this.controller.testSpeaker(readerIP);
 }

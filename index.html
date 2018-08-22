@@ -39,7 +39,11 @@
 
             <!-- Display a success or error message when performing an operation -->
             <div class="col-lg-9">
-                <div class="alert p-0" role="alert" id="operationStatus"></div>
+                <div class="alert p-0" role="alert" id="operationStatus">
+                    <button type="button" id="closeBtn" class="close d-none" aria-label="Close">
+                        <span aria-hidden="true">&times;</span> 
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -113,7 +117,6 @@
                             </div>
 
                             <div class="col-10 text-right" id="antennasList"></div>
-                        
                         </div>
                         
                         <!-- Speaker -->
@@ -134,8 +137,7 @@
                                 <button id="saveBtn" class="mb-3 mt-2 btn btn-primary btn-block" type="button">Save</button>
                             </div>
                         </div>
-                        
-                        <div id="saveResult" hidden></div>
+
                     </div>
                 </form>
             </div>
