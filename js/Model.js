@@ -82,6 +82,9 @@ Model.prototype.storeReaderInfo = function(readerInfoXML) {
 */
 Model.prototype.storeAntennas = function(antennasXML) {
 
+    // Reset the reader active antennas
+    this.activeAntennas = [];
+
     //obtain all the antennas
     var antennas = this.getXMLTagValue(antennasXML, "/response/data/entries/entry/def");
 
@@ -255,7 +258,7 @@ function Table() {
             { title:"Mux1", field:"mux1", sorter:"number", width: 95, headerFilter:"input" },
             { title:"Mux2", field:"mux2", sorter:"number", width: 95, headerFilter:"input" },
             { title:"RSSI", field:"rssi", sorter:"number", width: 90, headerFilter:"input", responsive: 0 },
-            { title:"Date", field:"date", sorter:"date", headerFilter:false, responsive: 0 }
+            { title:"Date", field:"date", headerFilter: false, responsive: 0 }
         ]
     };
 

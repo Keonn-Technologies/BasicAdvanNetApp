@@ -4,6 +4,7 @@ function Network(controller)  {
     //params
     this.readPower = "RF_READ_POWER";
     this.sensitivity = "RF_SENSITIVITY";
+    this.deviceID = null;
 }
 
 /* 
@@ -111,6 +112,7 @@ Network.prototype.getDeviceId =  function(readerIP) {
             var address = "http://" + readerIP + ":3161/devices";
             var xml = await this.getRequest(address);
             var deviceID = this.controller.getXMLTagValue(xml, "/response/data/devices/device/id")[0];
+            this.deviceID = deviceID;
             resolve(deviceID);
         }
         catch(error) {
@@ -146,8 +148,7 @@ Network.prototype.getRFData = function(readerIP) {
 Network.prototype.getReaderVolume = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var address = "http://" + readerIP + ":3161/devices/" + deviceID + "/actions"; 
+            var address = "http://" + readerIP + ":3161/devices/" + this.deviceID + "/actions"; 
             var xml = await this.getRequest(address);
             var volume = this.controller.getXMLTagValue(xml, "/response/data/entries/entry/volume")[0];
             resolve(volume);
@@ -182,8 +183,7 @@ Network.prototype.getReaderInfo = function(readerIP) {
 Network.prototype.getAntennas = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var address = "http://" + readerIP + ":3161/devices/" + deviceID + "/antennas"; 
+            var address = "http://" + readerIP + ":3161/devices/" + this.deviceID + "/antennas"; 
             var xml = await this.getRequest(address);
             resolve(xml);
         }
@@ -219,8 +219,7 @@ Network.prototype.getReaderStatus = function(readerIP) {
 Network.prototype.startReader = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var address = "http://" + readerIP + ":3161/devices/" + deviceID + "/start"; 
+            var address = "http://" + readerIP + ":3161/devices/" + this.deviceID + "/start"; 
             var xml = await this.getRequest(address);
             var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
             if (status == "OK") resolve(status);
@@ -239,8 +238,7 @@ Network.prototype.startReader = function(readerIP) {
 Network.prototype.stopReader = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var address = "http://" + readerIP + ":3161/devices/" + deviceID + "/stop"; 
+            var address = "http://" + readerIP + ":3161/devices/" + this.deviceID + "/stop"; 
             var xml = await this.getRequest(address);
             var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
             if (status == "OK") 
@@ -261,8 +259,7 @@ Network.prototype.stopReader = function(readerIP) {
 Network.prototype.getInventory = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var url = "http://" + readerIP + ":3161/devices/" + deviceID + "/jsonMinLocation"; 
+            var url = "http://" + readerIP + ":3161/devices/" + this.deviceID + "/jsonMinLocation"; 
             var xml = await this.getRequest(url);
             var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
             if (status == "ERROR") {
@@ -304,8 +301,7 @@ Network.prototype.savePower = function(readerIP, power) {
     return new Promise(async (resolve, reject) => {
         try {
             //http://192.168.1.165:3161/devices/AdvanReader-m4-150/reader/parameter/RF_READ_POWER
-            var deviceID = await this.getDeviceId(readerIP);
-            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/reader/parameter/" + this.readPower;
+            var url =  "http://" + readerIP + ":3161/devices/" + this.deviceID + "/reader/parameter/" + this.readPower;
             var body = power; 
             var xml = await this.putRequest(url, body);
             var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
@@ -327,8 +323,7 @@ Network.prototype.savePower = function(readerIP, power) {
 Network.prototype.saveSensitivity = function(readerIP, sensitivity) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/reader/parameter/" + this.sensitivity;
+            var url =  "http://" + readerIP + ":3161/devices/" + this.deviceID + "/reader/parameter/" + this.sensitivity;
             var body = sensitivity; 
             var xml = await this.putRequest(url, body);
             var status = this.controller.getXMLTagValue(xml, "/response/status")[0];
@@ -350,9 +345,8 @@ Network.prototype.saveSensitivity = function(readerIP, sensitivity) {
 Network.prototype.saveAntennas = function(readerIP, activeAntennas) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/antennas";
-            var xmlbody = this.createAntennasXML(deviceID, activeAntennas); 
+            var url =  "http://" + readerIP + ":3161/devices/" + this.deviceID + "/antennas";
+            var xmlbody = this.createAntennasXML(this.deviceID, activeAntennas); 
             var xmlresponse = await this.putRequest(url, xmlbody);
             var status = this.controller.getXMLTagValue(xmlresponse, "/response/status")[0];
             if (status == "OK") 
@@ -391,8 +385,7 @@ Network.prototype.createAntennasXML = function(deviceID, activeAntennas) {
 Network.prototype.testSpeaker = function(readerIP) {
     return new Promise(async (resolve, reject) => {
         try {
-            var deviceID = await this.getDeviceId(readerIP);
-            var url =  "http://" + readerIP + ":3161/devices/" + deviceID + "/speak/1000/4/200/0/200";
+            var url =  "http://" + readerIP + ":3161/devices/" + this.deviceID + "/speak/1000/4/200/0/200";
             await this.getRequest(url);
             resolve();
         }

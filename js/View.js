@@ -371,6 +371,9 @@ View.prototype.enableSaving = function() {
     document.getElementById("decreaseSensitivity").style.display = 'inline';
     document.getElementById("increaseSensitivity").style.display = 'inline';
 
+    //speaker
+    document.getElementById("speaker").style.cursor = 'pointer';
+
     //save button
     var saveBtn = document.getElementById("saveBtn");
     saveBtn.disabled = false;
@@ -392,6 +395,9 @@ View.prototype.disableSaving = function() {
     document.getElementById("increasePower").style.display = 'none';
     document.getElementById("decreaseSensitivity").style.display = 'none';
     document.getElementById("increaseSensitivity").style.display = 'none';
+
+    //speaker
+    document.getElementById("speaker").style.cursor = 'default';
 
     //save button
     var saveBtn = document.getElementById("saveBtn");
