@@ -181,6 +181,8 @@ Controller.prototype.updateInventory = async function (readerIP) {
     catch(error) {
         this.view.displayOperationStatus("alert-danger", error);
         this.updateReaderStatus(readerIP, "update");
+        this.stopInventory();
+        this.stopReader();
         //throw Error(error);
     }
 }
